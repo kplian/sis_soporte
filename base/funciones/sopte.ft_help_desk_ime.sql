@@ -86,7 +86,7 @@ BEGIN
                     
         begin
             --raise exception 'v_parametros %',v_parametros;
-          --#4 codigo de proceso WF de presolicitudes de compra
+          --codigo de proceso WF de presolicitudes de compra
             v_codigo_tipo_proceso = 'SOPTEC';           
             --Recoleccion de datos para el proceso WF #4
              --obtener id del proceso macro
@@ -103,8 +103,8 @@ BEGIN
                raise exception 'El proceso macro  de codigo % no esta configurado en el sistema WF',v_codigo_tipo_proceso;
              END IF; 
              
-             If v_parametros.id_tipo is NULL or  v_parametros.id_tipo = '' THEN
-               raise exception 'Ingrese un Tipo de Soporte ';
+             If v_parametros.id_tipo is NULL THEN
+               raise exception 'Ingrese un Tipo de Soporte';
              END IF;                
             --Obtencion de la gestion #4
              v_fecha= now()::date;
@@ -115,7 +115,7 @@ BEGIN
                 from param.tperiodo per
                 where per.fecha_ini <= v_parametros.fecha and per.fecha_fin >= v_parametros.fecha
                 limit 1 offset 0;            
-             
+    
              -- inciar el tramite en el sistema de WF   #4        
             SELECT
                    ps_num_tramite ,

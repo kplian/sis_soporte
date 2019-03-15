@@ -1,5 +1,8 @@
 /********************************************I-DAT-EGS-SOPTE-0-27/02/2019********************************************/
+-------insertamos el sistema------------
 
+INSERT INTO segu.tsubsistema ("codigo", "nombre", "fecha_reg", "prefijo", "estado_reg", "nombre_carpeta", "id_subsis_orig")
+VALUES (E'SOPTE', E'Soporte', E'2019-02-27', E'SOPTE', E'activo', E'soporte', NULL);
 ----------Estructura WF--------------
 select wf.f_import_tproceso_macro ('insert','SOPTE', 'SOPTE', 'Soporte tecnico','si');
 select wf.f_import_tcategoria_documento ('insert','legales', 'Legales');
