@@ -16,8 +16,8 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
- #0				22-02-2019 19:07:11								Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'	
- #
+ #0				22-02-2019 19:07:11		EGS EndeETR			Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'	
+ #0				22-02-2019 19:07:11		EGS EndeETR			Se agrego el campo sub_tipo
  ***************************************************************************/
 
 DECLARE
@@ -531,7 +531,8 @@ BEGIN
             id_usuario_ai = v_parametros._id_usuario_ai,
             usuario_ai = v_parametros._nombre_usuario_ai,
             prioridad = v_parametros.prioridad,
-            id_tipo_sub = v_parametros.id_tipo  
+            id_tipo = v_parametros.id_tipo,
+            id_tipo_sub = v_parametros.id_sub_tipo  --#8  
             where id_help_desk=v_parametros.id_help_desk;
                
             --Definicion de la respuesta
