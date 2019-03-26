@@ -5,7 +5,9 @@
 *@author  (eddy.gutierrez)
 *@date 28-02-2019 16:38:04
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
-*/
+	ISSUE 		FECHA			AUTHOR					DESCRIPCION
+ 	#3			18/02/2019		EGS						Se lista por id_tipo_fk
+ */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -28,13 +30,11 @@ Phx.vista.SubTipo ={
 	onReloadPage: function (m) {
 				//alert ('asda');				  
 		            this.maestro = m;
-		            this.store.baseParams = {id_tipo: this.maestro.id_tipo, nombreVista:this.nombreVista ,tipo:'no'}; 
+		            this.store.baseParams = {nombreVista:this.nombreVista ,tipo:'no',id_tipo_fk:this.maestro.id_tipo}; 
 		            this.load({params: {start: 0, limit: 50}});
 		            //this.Atributos[1].valorInicial = this.maestro.id_tipo;
 		            this.Atributos[this.getIndAtributo('id_tipo_fk')].valorInicial = this.maestro.id_tipo;
-
-		            
-		            
+         
 	},
 			
 	

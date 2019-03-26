@@ -16,8 +16,8 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 #ISSUE                FECHA                AUTOR                DESCRIPCION
- #0                22-02-2019 19:07:11                                Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'wf.thelp_desk'    
- #
+ #0                22-02-2019 19:07:11                          Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'wf.thelp_desk'    
+ #3 EndeEtr           25/03/2019            EGS                 Mejora Filtro      
  ***************************************************************************/
 
 DECLARE
@@ -45,9 +45,9 @@ BEGIN
         begin   
                  IF p_administrador !=1  then
                  --si es la vista del help y estan en estado asignado y finalizado muestra solo os registristros del funcionario solicitante
-                    IF v_parametros.nombreVista = 'HelpDesk' AND (v_parametros.estado = 'asignado' OR v_parametros.estado = 'finalizado')   THEN
+                    IF v_parametros.nombreVista = 'HelpDesk'   THEN --#3
                       v_filtro = '(help.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ';
-                    ELSIF v_parametros.estado = 'asignado'  THEN --si esde estado asignado solo muestra los registros que le pertenecen al asignarle
+                    ELSIF v_parametros.nombreVista = 'HelpDeskAsis' and (v_parametros.estado = 'asignado' or v_parametros.estado ='proceso'or v_parametros.estado ='resuelto')  THEN --#3 si esde estado asignado solo muestra los registros que le pertenecen al asignarle
                     v_filtro = '(ew.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ';  
                     ELSE
                     v_filtro = ' ';
