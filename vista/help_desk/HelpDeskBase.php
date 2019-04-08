@@ -5,7 +5,10 @@
 *@author  (eddy.gutierrez)
 *@date 22-02-2019 19:07:11
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
-*/
+HISTORIAL DE MODIFICACIONES:
+ #ISSUE                FECHA                AUTOR                DESCRIPCION
+ #4 EndeEtr           08/04/2019            EGS                 Se modifico el grid de la vizualizacion para que muestre lo oculto ante como usr reg y fecha reg
+ * */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -31,7 +34,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	                tooltip: '<b>Documentos del Problema</b><br/>Permite ver los documentos asociados al NRO de trámite.'
 	            });		
 	},
-	arrayDefaultColumHidden:['fecha_reg','usr_reg','fecha_mod','usr_mod','id_proceso_wf','id_estado_wf','estado_reg','id_usuario_ai','usuario_ai'],
+	/* //#4
+	arrayDefaultColumHidden:['fecha_mod','usr_mod','id_proceso_wf','id_estado_wf','estado_reg','id_usuario_ai','usuario_ai'],
 	rowExpander: new Ext.ux.grid.RowExpander({
 	            tpl : new Ext.Template(
 	                '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Usuario Registro:&nbsp;&nbsp;</b> {usr_reg}</p>',
@@ -39,7 +43,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	                //'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Usuario Modificación:&nbsp;&nbsp;</b> {usr_mod}</p>',
 	                //'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Fecha Modificación:&nbsp;&nbsp;</b> {fecha_mod}</p>'
 	            )
-	    }) ,
+	    }) ,*/
 
     	loadCheckDocumentosWf:function() {
             var rec=this.sm.getSelected();
@@ -155,27 +159,64 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				
 				 var prioridad = store.data.prioridad; 
 				 	 prioridad = prioridad.split(",");  
-                        console.log('prio',prioridad[0]); 
+                        console.log('record',record); 
+                 var fecha = '"'+record.data['fecha_reg']+'"';
+                     fecha = Ext.util.Format.date(fecha,'d/m/Y');        
+                        
                          				
 				if(record.json.nombreVista == 'HelpDesk' ){
 						return '<tpl for="."><div class="x-combo-list-item"><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p></div></tpl>';
 				}
 				if(record.json.nombreVista == 'HelpDeskAsis' ){
-						
+						//#4
 						if (record.data['desc_prioridad']==prioridad[0]){
-						return '<tpl for="."><div class="x-combo-list-item"><p><b>Prioridad: <font  size=3 color="green"> </b> '+record.data['desc_prioridad'] +'</font></p><p><b>Estado: <font  size=3 > </b> '+record.data['estado'] +'</font></p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p></div></tpl>';
+						return '<tpl for="."><div class="x-combo-list-item">\
+						<p><b>Prioridad: <font  size=3 color="green"> </b> '+record.data['desc_prioridad'] +'</font></p>\
+						<p><b>Estado: <font  size=3 > </b> '+record.data['estado'] +'</font>\
+						</p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
+						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
+						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
+						</div></tpl>';
 							}
 							 if (record.data['desc_prioridad']==prioridad[1]){
-						return '<tpl for="."><div class="x-combo-list-item"><p><b>Prioridad: <font  size=3 color="blue"> </b> '+record.data['desc_prioridad'] +'</font></p><p><b>Estado: <font  size=3 > </b> '+record.data['estado'] +'</font></p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p></div></tpl>';
+						return '<tpl for="."><div class="x-combo-list-item">\
+						<p><b>Prioridad: <font  size=3 color="blue"> </b> '+record.data['desc_prioridad'] +'</font></p>\
+						<p><b>Estado: <font  size=3 > </b> '+record.data['estado'] +'</font></p>\
+						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
+						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
+						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
+						</div></tpl>';
 							}
 							 if (record.data['desc_prioridad']==prioridad[2]){
-						return '<tpl for="."><div class="x-combo-list-item"><p><b>Prioridad: <font  size=3 color="orange"> </b> '+record.data['desc_prioridad'] +'</font><p><b>Estado: <font  size=3>  </b> '+record.data['estado'] +'</font></p></p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p></div></tpl>';
+						return '<tpl for="."><div class="x-combo-list-item">\
+						<p><b>Prioridad: <font  size=3 color="orange"> </b> '+record.data['desc_prioridad'] +'</font></p>\
+						<p><b>Estado: <font  size=3>  </b> '+record.data['estado'] +'</font></p>\
+						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
+						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
+						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
+						</div></tpl>';
 							}
 							if (record.data['desc_prioridad']==prioridad[3]){
-						return '<tpl for="."><div class="x-combo-list-item"><p><b>Prioridad: <font  size=3 color="red"> </b> '+record.data['desc_prioridad'] +'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p></div></tpl>';
+						return '<tpl for="."><div class="x-combo-list-item">\
+						<p><b>Prioridad: <font  size=3 color="red"> </b> '+record.data['desc_prioridad'] +'</font></p>\
+						<p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p>\
+						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
+						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
+						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
+						</div></tpl>';
 							}
 						if (record.data['desc_prioridad']== '' ){
-						return '<tpl for="."><div class="x-combo-list-item"><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p></div></tpl>';
+						return '<tpl for="."><div class="x-combo-list-item">\
+						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
+						<p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p>\
+						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
+						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
+						</div></tpl>';
 						}
 				}
 				if(record.json.nombreVista == '' ){
@@ -334,7 +375,13 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				fieldLabel: 'Descripcion',
 				allowBlank: false,
 				anchor: '80%',
-				gwidth: 100
+				gwidth: 300,
+				maxLength:1000,
+				renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                          metaData.css = 'multilineColumn'; 
+                          return String.format('<div class="gridmultiline">{0}</div>', value);
+                     }
+				
 			},
 				type:'TextArea',
 				filters:{pfiltro:'help.descripcion',type:'string'},
@@ -342,6 +389,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				grid:true,
 				form:true
 		},
+
 		{
 			config:{
 				name: 'estado',

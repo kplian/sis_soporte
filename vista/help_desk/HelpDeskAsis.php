@@ -76,14 +76,19 @@ Phx.vista.HelpDeskAsis = {
     bactGroups:  [0,1,2,3,4],
     btestGroups: [0],
     bexcelGroups: [0,1,2,3,4],
-    
+    /*
     gruposBarraTareas:[	{name:'pendiente',title:'<H1 align="center"><i class="fa fa-eye"></i> Pendiente</h1>',grupo:0,height:0},
     					{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asignado</h1>',grupo:1,height:0},
 				    	{name:'proceso',title:'<H1 align="center"><i class="fa fa-eye"></i> Proceso</h1>',grupo:2,height:0},
                        	{name:'resuelto',title:'<H1 align="center"><i class="fa fa-eye"></i> Resuelto</h1>',grupo:3,height:0},
                        	{name:'finalizado',title:'<H1 align="center"><i class="fa fa-eye"></i>Finali./Rech.</h1>',grupo:4,height:0}
                        
-                       ],
+                       ],*/
+                      
+    gruposBarraTareas:[	{name:'pendiente',title:'<H1 align="center"><i class="fa fa-eye"></i> Pendiente</h1>',grupo:0,height:0},
+    					{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asig/Proc</h1>',grupo:1,height:0},
+                       	{name:'resuelto',title:'<H1 align="center"><i class="fa fa-eye"></i> Resuelto</h1>',grupo:3,height:0}],
+                       	                  
     actualizarSegunTab: function(name, indice){
         if(this.finCons) {        	 
              //this.store.baseParams.nombre_estado= name; 
@@ -110,7 +115,7 @@ Phx.vista.HelpDeskAsis = {
         this.getBoton('diagrama_gantt').enable();
 		this.getBoton('btnChequeoDocumentosWf').enable();
         this.getBoton('btnatrasignacion').enable();
-         if (data.estado == 'finalizado') {
+         if (data.estado == 'resuelto') {//#4
          	this.getBoton('sig_estado').disable();
          } else{
          	this.getBoton('sig_estado').enable();
