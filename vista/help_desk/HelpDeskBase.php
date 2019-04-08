@@ -379,7 +379,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				maxLength:1000,
 				renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                           metaData.css = 'multilineColumn'; 
-                          return String.format('<div class="gridmultiline">{0}</div>', value);
+                          return String.format('<div class="gridmultiline">{0}</div>', value);//#4
                      }
 				
 			},

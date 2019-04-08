@@ -73,7 +73,7 @@ BEGIN
                         v_filtro = '(help.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ';
                     
                          
-                    ELSIF v_parametros.nombreVista = 'HelpDeskAsis' and v_cargo <> 'administrador' and (v_parametros.estado = 'asignado' or v_parametros.estado ='proceso'or v_parametros.estado ='resuelto')  THEN --#3 si esde estado asignado solo muestra los registros que le pertenecen al asignarle
+                    ELSIF v_parametros.nombreVista = 'HelpDeskAsis' and v_cargo <> 'administrador' and (v_parametros.estado = 'asignado' or v_parametros.estado ='proceso')  THEN --#3 si esde estado asignado solo muestra los registros que le pertenecen al asignarle
                                                                                                                                                     
                         v_filtro = '(ew.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ew.id_depto in ('||v_depto||') and';  
                     

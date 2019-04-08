@@ -5,6 +5,8 @@
 *@author  (eddy.gutierrez)
 *@date 22-02-2019 19:07:11
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ *  #ISSUE                FECHA                AUTOR                DESCRIPCION
+ #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana 
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -76,7 +78,7 @@ Phx.vista.HelpDeskAsis = {
     bactGroups:  [0,1,2,3,4],
     btestGroups: [0],
     bexcelGroups: [0,1,2,3,4],
-    /*
+    /*//#4
     gruposBarraTareas:[	{name:'pendiente',title:'<H1 align="center"><i class="fa fa-eye"></i> Pendiente</h1>',grupo:0,height:0},
     					{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asignado</h1>',grupo:1,height:0},
 				    	{name:'proceso',title:'<H1 align="center"><i class="fa fa-eye"></i> Proceso</h1>',grupo:2,height:0},
@@ -86,8 +88,8 @@ Phx.vista.HelpDeskAsis = {
                        ],*/
                       
     gruposBarraTareas:[	{name:'pendiente',title:'<H1 align="center"><i class="fa fa-eye"></i> Pendiente</h1>',grupo:0,height:0},
-    					{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asig/Proc</h1>',grupo:1,height:0},
-                       	{name:'resuelto',title:'<H1 align="center"><i class="fa fa-eye"></i> Resuelto</h1>',grupo:3,height:0}],
+    					{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asig/Proc</h1>',grupo:1,height:0},//#4
+                       	{name:'resuelto',title:'<H1 align="center"><i class="fa fa-eye"></i> Resuel/Recha</h1>',grupo:3,height:0}],
                        	                  
     actualizarSegunTab: function(name, indice){
         if(this.finCons) {        	 
