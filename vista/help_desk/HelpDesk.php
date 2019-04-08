@@ -5,6 +5,10 @@
 *@author  (eddy.gutierrez)
 *@date 22-02-2019 19:07:11
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ HISTORIAL DE MODIFICACIONES:
+ #ISSUE                FECHA                AUTOR                DESCRIPCION
+ #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana   
+     
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -30,7 +34,9 @@ Phx.vista.HelpDesk = {
 		
 		this.store.baseParams.id_usuario = Phx.CP.config_ini.id_usuario;
 		console.log('id_funcionario',Phx.CP.config_ini.id_funcionario) ;             
-		this.load({params:{start:0, limit:this.tam_pag ,estado:'borrador',nombreVista: this.nombreVista}});
+		//this.load({params:{start:0, limit:this.tam_pag ,estado:'borrador',nombreVista: this.nombreVista}});//#4
+		this.load({params:{start:0, limit:this.tam_pag ,nombreVista: this.nombreVista}});
+
 		
 		this.addButton('ant_estado',
 						{argument: {estado: 'anterior'},
@@ -58,6 +64,7 @@ Phx.vista.HelpDesk = {
     bactGroups:  [0,1,2,3],
     btestGroups: [0],
     bexcelGroups: [0,1,2,3],
+    /*//#4
     gruposBarraTareas:[	{name:'borrador',title:'<H1 align="center"><i class="fa fa-eye"></i> Solicitud</h1>',grupo:0,height:0},
 					   	{name:'asignado',title:'<H1 align="center"><i class="fa fa-eye"></i> Asignacion</h1>',grupo:1,height:0},
 						{name:'resuelto',title:'<H1 align="center"><i class="fa fa-eye"></i> Resuelto</h1>',grupo:2,height:0},					  
@@ -72,7 +79,7 @@ Phx.vista.HelpDesk = {
              this.load({params:{start:0, limit:this.tam_pag}});
         }
     },	
-	
+	*/
 	iniciarEventos: function() {		
 
 
@@ -91,7 +98,7 @@ Phx.vista.HelpDesk = {
 					                                    
 					                }, scope : this
 					            });                  
-       		  this.Cmp.id_funcionario.disable();
+       		  //this.Cmp.id_funcionario.disable();
 
     },
    	onButtonEdit: function() {
@@ -125,9 +132,9 @@ Phx.vista.HelpDesk = {
          }else{
          	this.getBoton('sig_estado').disable();	
          }; 
-         if(data.estado == 'resuelto'){
+         if(data.estado == 'resuelto'){ //#4
          	this.getBoton('ant_estado').enable();
-    		this.getBoton('sig_estado').enable();		
+    		this.getBoton('sig_estado').disable();		
          };
          
 

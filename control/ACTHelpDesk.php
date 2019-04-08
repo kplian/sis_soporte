@@ -5,7 +5,11 @@
 *@author  (eddy.gutierrez)
 *@date 22-02-2019 19:07:11
 *@description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
-*/
+ HISTORIAL DE MODIFICACIONES:
+ #ISSUE                FECHA                AUTOR                DESCRIPCION
+ #4 EndeEtr           08/04/2019            EGS                 Se modifico los filtros para cada una de las ventas de help desk y asis    
+     
+ */
 
 class ACTHelpDesk extends ACTbase{    
 			
@@ -16,11 +20,11 @@ class ACTHelpDesk extends ACTbase{
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if ($this->objParam->getParametro('estado') != '') {
 			
-			if ($this->objParam->getParametro('estado') == 'finalizado') {
-				$this->objParam->addFiltro("help.estado in (''finalizado'',''rechazado'')");					
+			if ($this->objParam->getParametro('estado') == 'resuelto') {//#4
+				$this->objParam->addFiltro("help.estado in (''resuelto'',''rechazado'')");	//#4				
 			}
-			else if ($this->objParam->getParametro('estado') == 'asignado' && $this->objParam->getParametro('nombreVista') == 'HelpDesk') {
-				$this->objParam->addFiltro("help.estado in (''pendiente'',''asignado'',''proceso'')");					
+			else if ($this->objParam->getParametro('estado') == 'asignado' && $this->objParam->getParametro('nombreVista') == 'HelpDeskAsis') {
+				$this->objParam->addFiltro("help.estado in (''asignado'',''proceso'')");	//#4				
 			} else {
 				$this->objParam->addFiltro("help.estado = ''" . $this->objParam->getParametro('estado') . "''");		
 			}
