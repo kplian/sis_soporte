@@ -8,6 +8,7 @@
  HISTORIAL DE MODIFICACIONES:
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico los filtros para cada una de las ventas de help desk y asis    
+ #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
      
  */
 
@@ -17,7 +18,7 @@ class ACTHelpDesk extends ACTbase{
 		$this->objParam->defecto('ordenacion','id_help_desk');
 		$this->objParam->addParametro('id_funcionario_usu',$_SESSION["ss_id_funcionario"]); 
 
-		$this->objParam->defecto('dir_ordenacion','asc');
+		$this->objParam->defecto('dir_ordenacion','DESC');//ordenacion toma de la vista
 		if ($this->objParam->getParametro('estado') != '') {
 			
 			if ($this->objParam->getParametro('estado') == 'resuelto') {//#4

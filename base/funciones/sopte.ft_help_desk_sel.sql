@@ -72,12 +72,14 @@ BEGIN
                      
                         v_filtro = '(help.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ';
                     
-                         
+                    --Si no soy administrador y estoy en pendiente no veo nada
+                    ElSIF v_parametros.nombreVista = 'HelpDeskAsis' and v_cargo <> 'administrador' and v_parametros.estado = 'pendiente' THEN
+                        v_filtro = 'help.id_help_desk = 0 and'; 
+                     -- si no soy administrador y estoy en estado asignado y proceso solo veo lo que que se me asigno en los deptos que pertenece    
                     ELSIF v_parametros.nombreVista = 'HelpDeskAsis' and v_cargo <> 'administrador' and (v_parametros.estado = 'asignado' or v_parametros.estado ='proceso')  THEN --#3 si esde estado asignado solo muestra los registros que le pertenecen al asignarle
                                                                                                                                                     
                         v_filtro = '(ew.id_funcionario = '||v_parametros.id_funcionario_usu::varchar||' ) and ew.id_depto in ('||v_depto||') and';  
                     
-        
                     ELSE
                     v_filtro = ' ';
                     END IF;

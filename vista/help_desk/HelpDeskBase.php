@@ -8,6 +8,8 @@
 HISTORIAL DE MODIFICACIONES:
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico el grid de la vizualizacion para que muestre lo oculto ante como usr reg y fecha reg
+ #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
+ * 
  * */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -581,7 +583,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	],
 	sortInfo:{
 		field: 'id_help_desk',
-		direction: 'ASC'
+		direction: 'DESC'//#5
 	},
 	bdel:true,
 	bsave:true,
