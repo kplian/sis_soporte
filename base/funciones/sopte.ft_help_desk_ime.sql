@@ -71,10 +71,10 @@ DECLARE
     va_prioridad            integer[];
     p_id_usuario_ai         integer;
     p_usuario_ai            varchar;
-    v_nro_tramite           varchar;
-    v_id_alarma             varchar;
-    v_correo                varchar;
-    v_descripcion_correo    varchar;                
+    v_nro_tramite           varchar;--#5
+    v_id_alarma             varchar;--#5
+    v_correo                varchar;--#5
+    v_descripcion_correo    varchar;--#5                
 BEGIN
 
     v_nombre_funcion = 'sopte.ft_help_desk_ime';
@@ -272,7 +272,7 @@ BEGIN
                   v_codigo_estado,
                   v_prioridad,
                   v_id_tipo_sub, ---id del subtipo
-                  v_nro_tramite
+                  v_nro_tramite --#5
                   from sopte.thelp_desk c
                   inner join wf.testado_wf ew on ew.id_estado_wf = c.id_estado_wf  
                   where c.id_help_desk = v_parametros.id_help_desk;
