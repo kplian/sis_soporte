@@ -1,3 +1,11 @@
+CREATE OR REPLACE FUNCTION sopte.ft_help_desk_ime (
+  p_administrador integer,
+  p_id_usuario integer,
+  p_tabla varchar,
+  p_transaccion varchar
+)
+RETURNS varchar AS
+$body$
 /**************************************************************************
  SISTEMA:		Soprote
  FUNCION: 		sopte.ft_help_desk_ime
@@ -594,3 +602,9 @@ EXCEPTION
         raise exception '%',v_resp;
                         
 END;
+$body$
+LANGUAGE 'plpgsql'
+VOLATILE
+CALLED ON NULL INPUT
+SECURITY INVOKER
+COST 100;
