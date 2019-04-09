@@ -19,7 +19,7 @@ $body$
  #0                22-02-2019 19:07:11                          Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'wf.thelp_desk'    
  #3 EndeEtr           25/03/2019            EGS                 Mejora Filtro 
  #4 EndeEtr           08/04/2019            EGS                 Se agrego que los administradores de work flow de los deptos vean todos los tramites     
-     
+ #5 EndeEtr           09/04/2019            EGS                 Se visualiza obs de Wf en estado resuelto y rechazado     
  ***************************************************************************/
 
 DECLARE
@@ -88,12 +88,12 @@ BEGIN
                  END IF;
                  
                  IF v_parametros.nombreVista = 'HelpDeskAsis'  THEN
-                        sw_obs = 'ew.obs,';
+                        sw_obs = 'ew.obs';
                  ELSE
-                        sw_obs = ' ''--''::text as obs,';
+                        sw_obs = ' ''--''::text';
                  END IF;
         
-        
+            --#5 cambio que al ser estado rechazdo o resuelto el solicitante vea sus descripcion de obs
             --Sentencia de la consulta
             v_consulta:='select
                         help.id_help_desk,
@@ -114,7 +114,12 @@ BEGIN
                         help.estado,
                         fun.desc_funcionario1::varchar as desc_funcionario,
                         te.etapa,
-                        '||sw_obs||'                        
+                        CASE
+                        WHEN help.estado = ''rechazado'' or help.estado = ''resuelto'' THEN
+                        ew.obs
+                        ELSE
+                        '||sw_obs||'
+                        END as obs,
                         tip.nombre as nombre_tipo,
                         help.descripcion,
                         funi.desc_funcionario1::varchar as desc_funcionario_asignado,
