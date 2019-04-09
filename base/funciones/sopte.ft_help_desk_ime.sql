@@ -18,6 +18,7 @@ $body$
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				22-02-2019 19:07:11		EGS EndeETR			Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'	
  #0				22-02-2019 19:07:11		EGS EndeETR			Se agrego el campo sub_tipo
+ #5             09/04/2019              EGS EndeEtr         Se agrego el envio de correos al solicitante en los estados rechazado y resuelto
  ***************************************************************************/
 
 DECLARE
@@ -69,7 +70,11 @@ DECLARE
     va_regla                varchar[]; 
     va_prioridad            integer[];
     p_id_usuario_ai         integer;
-    p_usuario_ai            varchar;                
+    p_usuario_ai            varchar;
+    v_nro_tramite           varchar;
+    v_id_alarma             varchar;
+    v_correo                varchar;
+    v_descripcion_correo    varchar;                
 BEGIN
 
     v_nombre_funcion = 'sopte.ft_help_desk_ime';
@@ -259,13 +264,15 @@ BEGIN
                   c.id_estado_wf,
                   c.estado,
                   c.prioridad,
-                  c.id_tipo_sub    
+                  c.id_tipo_sub,
+                  c.nro_tramite    
                   into
                   v_id_proceso_wf,
                   v_id_estado_wf,
                   v_codigo_estado,
                   v_prioridad,
-                  v_id_tipo_sub ---id del subtipo
+                  v_id_tipo_sub, ---id del subtipo
+                  v_nro_tramite
                   from sopte.thelp_desk c
                   inner join wf.testado_wf ew on ew.id_estado_wf = c.id_estado_wf  
                   where c.id_help_desk = v_parametros.id_help_desk;
@@ -299,9 +306,7 @@ BEGIN
                       v_obs='---';
                   end if;
 
-                  --Acciones por estado siguiente que podrian realizarse
-                  if v_codigo_estado_siguiente in ('') then
-                  end if;
+
 
                   IF v_codigo_estado = 'pendiente' and v_codigo_estado_siguiente = 'asignado'  THEN
                        IF v_prioridad is null or v_prioridad = '' THEN
@@ -328,6 +333,8 @@ BEGIN
                       v_tipo_noti = 'notificacion';
                       v_titulo  = 'Asignacion';
                   end if;
+
+
                   v_id_estado_actual = wf.f_registra_estado_wf(
                                                          v_parametros.id_tipo_estado,
                                                          v_parametros.id_funcionario_wf,
@@ -343,9 +350,43 @@ BEGIN
                                                          v_parametros_ad,
                                                          v_tipo_noti,
                                                          v_titulo );
-                   
+                                                         
+                 --#5 buscamos el correo del funcionario solicitante
+                 SELECT
+                    fun.email_empresa
+                 INTO
+                    v_correo
+                 FROM orga.tfuncionario fun
+                 WHERE fun.id_funcionario = v_parametros.id_funcionario_wf ;
+                                                         
+                  --Acciones por estado siguiente que podrian realizarse
+                  --#5 Insertamos una alarma para el funcionario solicitante
+                  if v_codigo_estado_siguiente in ('resuelto','rechazado') then --#5  
 
-                      --raise exception 'v_id_estado_actual %',v_id_estado_actual;
+                            IF v_codigo_estado_siguiente = 'resuelto' THEN
+                                v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACION SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolucion del soporte con numero de tramite : <b>'||v_nro_tramite||'.<br> Agradecerle que lo rebice para su conformidad.<br>  Saludos<br>';
+                                v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
+                            ELSIF v_codigo_estado_siguiente = 'rechazado' THEN
+                                 v_descripcion_correo = '<font color="FF0000" size="5"><font size="4">NOTIFICACION SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre El Rechazo de la solicitud de soporte con numero de tramite : <b>Para mas informacion comuniquese con los administradores. Saludos'||v_nro_tramite||'.<br>  Saludos<br>';
+                                v_titulo = 'Servicio de Soporte Rechazado: '||v_nro_tramite;             
+                            END IF;
+                            
+                             v_id_alarma = param.f_inserta_alarma(
+                                    v_parametros.id_funcionario_wf,
+                                    v_descripcion_correo,--par_descripcion
+                                    v_acceso_directo,--acceso directo
+                                    now()::date,--par_fecha: Indica la fecha de vencimiento de la alarma
+                                    v_tipo_noti, --notificacion
+                                    v_titulo,  --asunto
+                                    p_id_usuario,
+                                    v_clase, --clase
+                                    v_titulo,--titulo
+                                    v_parametros_ad,--par_parametros varchar,   parametros a mandar a la interface de acceso directo
+                                    p_id_usuario, --usuario a quien va dirigida la alarma
+                                    v_titulo,--titulo correo
+                                    v_correo --correo funcionario
+                                   );
+                  end if;
                   --------------------------------------
                   -- Registra los procesos disparados
                   --------------------------------------
