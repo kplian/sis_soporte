@@ -361,16 +361,17 @@ BEGIN
                                                          
                   --Acciones por estado siguiente que podrian realizarse
                   --#5 Insertamos una alarma para el funcionario solicitante
+                  --#5 se aumento obs de wf en correo y alarma
                   if v_codigo_estado_siguiente in ('resuelto','rechazado') then --#5  
 
                             IF v_codigo_estado_siguiente = 'resuelto' THEN
-                                v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACION SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolucion del soporte con numero de tramite : <b>'||v_nro_tramite||'.<br> Agradecerle que lo rebice para su conformidad.<br>  Saludos<br>';
+                                v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolución del soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br> Agradecerle que lo revise para su conformidad.<br>  Saludos<br>';
                                 v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
                             ELSIF v_codigo_estado_siguiente = 'rechazado' THEN
-                                 v_descripcion_correo = '<font color="FF0000" size="5"><font size="4">NOTIFICACION SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre El Rechazo de la solicitud de soporte con numero de tramite : <b>Para mas informacion comuniquese con los administradores. Saludos'||v_nro_tramite||'.<br>  Saludos<br>';
+                                 v_descripcion_correo = '<font color="FF0000" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre El Rechazo de la solicitud de soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br>Para mas información comuníquese con los administradores. Saludos<br>';
                                 v_titulo = 'Servicio de Soporte Rechazado: '||v_nro_tramite;             
                             END IF;
-                            
+      
                              v_id_alarma = param.f_inserta_alarma(
                                     v_parametros.id_funcionario_wf,
                                     v_descripcion_correo,--par_descripcion
