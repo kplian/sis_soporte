@@ -8,6 +8,7 @@
  HISTORIAL DE MODIFICACIONES:
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana   
+ #6 EndeEtr           18/04/2019            EGS                 Funcionarios solo vigentes
      
 */
 
@@ -88,6 +89,7 @@ Phx.vista.HelpDesk = {
              Phx.vista.HelpDesk.superclass.onButtonNew.call(this);
              this.Cmp.fecha.setValue(new Date());
              this.Cmp.fecha.disable();
+             this.Cmp.id_funcionario.store.baseParams.fecha = this.Cmp.fecha.getValue().dateFormat(this.Cmp.fecha.format);// #6
     		 this.Cmp.id_funcionario.store.baseParams.query = Phx.CP.config_ini.id_funcionario;
 							    this.Cmp.id_funcionario.store.load({params:{start:0,limit:this.tam_pag}, 
 					               callback : function (r) {                        
