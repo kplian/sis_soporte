@@ -20,6 +20,8 @@ $body$
  #3 EndeEtr           25/03/2019            EGS                 Mejora Filtro 
  #4 EndeEtr           08/04/2019            EGS                 Se agrego que los administradores de work flow de los deptos vean todos los tramites     
  #5 EndeEtr           09/04/2019            EGS                 Se visualiza obs de Wf en estado resuelto y rechazado     
+ #7 EndeEtr           22/04/2019            EGS                 Se arregla filtros    
+
  ***************************************************************************/
 
 DECLARE
@@ -159,14 +161,18 @@ BEGIN
     elsif(p_transaccion='SOPTE_HELP_CONT')then
 
         begin
-            --Sentencia de la consulta de conteo de registros
+            --Sentencia de la consulta de conteo de registros --#7
             v_consulta:='select count(id_help_desk)
                         from sopte.thelp_desk help
                         inner join segu.tusuario usu1 on usu1.id_usuario = help.id_usuario_reg
                         left join segu.tusuario usu2 on usu2.id_usuario = help.id_usuario_mod
                         inner join orga.vfuncionario fun on fun.id_funcionario = help.id_funcionario
                         inner join wf.testado_wf ew on ew.id_proceso_wf = help.id_proceso_wf and  ew.estado_reg = ''activo''
+                        left join orga.vfuncionario funi on funi.id_funcionario = ew.id_funcionario
                         inner join wf.ttipo_estado te on te.id_tipo_estado = ew.id_tipo_estado
+                        left join sopte.ttipo tip on tip.id_tipo = help.id_tipo
+                        left join sopte.ttipo subti on subti.id_tipo =help.id_tipo_sub
+                        left join param.tcatalogo cat on cat.codigo = help.prioridad
                         where ';
             
             --Definicion de la respuesta            

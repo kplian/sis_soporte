@@ -10,6 +10,7 @@ HISTORIAL DE MODIFICACIONES:
  #4 EndeEtr           08/04/2019            EGS                 Se modifico el grid de la vizualizacion para que muestre lo oculto ante como usr reg y fecha reg
  #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
  #6 EndeEtr           18/04/2019            EGS                 multilinea en observaciones
+ #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
 
  * 
  * */
@@ -404,7 +405,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				maxLength:-5
 			},
 				type:'TextField',
-				filters:{pfiltro:'help.nro_tramite',type:'string'},
+				filters:{pfiltro:'help.estado',type:'string'},//#7
 				id_grupo:1,
 				grid:true,
 				form:false
@@ -419,6 +420,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				maxLength:-5
 			},
 				type:'TextField',
+				filters:{pfiltro:'funi.desc_funcionario1',type:'string'},
 				id_grupo:1,
 				grid:true,
 				form:false
