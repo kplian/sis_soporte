@@ -19,6 +19,8 @@ $body$
  #0				22-02-2019 19:07:11		EGS EndeETR			Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'	
  #0				22-02-2019 19:07:11		EGS EndeETR			Se agrego el campo sub_tipo
  #5             09/04/2019              EGS EndeEtr         Se agrego el envio de correos al solicitante en los estados rechazado y resuelto
+ #7             22/04/2019              EGS EndeEtr         Se envia correos para los administradores y el superior del solicitante en estado pendiente
+                                                            y correos al superior y solicitante en estado resuelto
  ***************************************************************************/
 
 DECLARE
@@ -74,7 +76,28 @@ DECLARE
     v_nro_tramite           varchar;--#5
     v_id_alarma             varchar;--#5
     v_correo                varchar;--#5
-    v_descripcion_correo    varchar;--#5                
+    v_descripcion_correo    varchar;--#5
+    vuo_id_uo               INTEGER[];--#7 
+    vuo_id_funcionario      INTEGER[];--#7 
+    vuo_gerencia            VARCHAR[];--#7 
+    vuo_numero_nivel        VARCHAR[];--#7 
+    v_correo_encar          VARCHAR;--#7 
+    v_descripcion_sol       VARCHAR;--#7 
+    v_desc_funcionario      VARCHAR;--#7 
+    v_admi_correos          record;--#7 
+    v_cor                   record;--#7 
+    v_desc_funcionario_encar    VARCHAR;--#7 
+    v_id_funcionario_encar  integer;--#7 
+    
+    v_bandera_GG                    varchar; --#7 
+    v_bandera_GAF                   varchar;--#7 
+    v_record_gg                     varchar[];--#7  
+    v_record_gaf                    varchar[];--#7  
+    v_record_id_funcionario_gg      integer; --#7 
+    v_record_id_funcionario_gaf     integer;--#7  
+    v_fecha_now                     date;--#7 
+
+    
 BEGIN
 
     v_nombre_funcion = 'sopte.ft_help_desk_ime';
@@ -265,14 +288,20 @@ BEGIN
                   c.estado,
                   c.prioridad,
                   c.id_tipo_sub,
-                  c.nro_tramite    
+                  c.nro_tramite,
+                  c.fecha,
+                  c.id_funcionario,
+                  c.descripcion
                   into
                   v_id_proceso_wf,
                   v_id_estado_wf,
                   v_codigo_estado,
                   v_prioridad,
                   v_id_tipo_sub, ---id del subtipo
-                  v_nro_tramite --#5
+                  v_nro_tramite, --#5
+                  v_fecha,
+                  v_id_funcionario,
+                  v_descripcion_sol
                   from sopte.thelp_desk c
                   inner join wf.testado_wf ew on ew.id_estado_wf = c.id_estado_wf  
                   where c.id_help_desk = v_parametros.id_help_desk;
@@ -299,6 +328,7 @@ BEGIN
                   if pxp.f_existe_parametro(p_tabla,'id_depto_wf') then
                       v_id_depto = v_parametros.id_depto_wf;
                   end if;
+                  --Raise exception 'v_id_depto %',v_id_depto;                                    
 
                   if pxp.f_existe_parametro(p_tabla,'obs') then
                       v_obs=v_parametros.obs;
@@ -350,26 +380,154 @@ BEGIN
                                                          v_parametros_ad,
                                                          v_tipo_noti,
                                                          v_titulo );
-                                                         
-                 --#5 buscamos el correo del funcionario solicitante
+                ----Creamos una tabla temporal para el envio de correos --#7 
+                CREATE TEMPORARY TABLE temporal(
+                                      id serial,
+                                      id_funcionario integer,
+                                      email_empresa varchar,
+                                      cargo         varchar,
+                                      enviar        boolean
+                                     ) ON COMMIT DROP;                                                               
+                 --recuperamos los funcionarios administradores del depto e insertamos  a la temp --#7 
+                 FOR v_admi_correos IN (
                  SELECT
+                    fun.id_funcionario,
+                    fun.email_empresa 
+                 FROM param.tdepto depto
+                 LEFT JOIN param.tdepto_usuario deptous on deptous.id_depto = depto.id_depto
+                 LEFT JOIN segu.tusuario usu on usu.id_usuario = deptous.id_usuario
+                 LEFT JOIN orga.vfuncionario_persona  fun on fun.id_persona = usu.id_persona 
+                 WHERE deptous.cargo = 'administrador' and depto.id_depto = v_id_depto)LOOP
+                            INSERT INTO 
+                            temporal
+                            (
+                              id_funcionario, 
+                              email_empresa, 
+                              cargo,       
+                              enviar       
+                             )VALUES(
+                             v_admi_correos.id_funcionario,
+                             v_admi_correos.email_empresa,
+                             'administrador',
+                             TRUE                       
+                             );
+                    
+                 END LOOP;
+                                                       
+                 --recuperamos los funcionarios encargado de los funcionarios solicitantes --#7 
+                   WITH RECURSIVE path( id_funcionario, id_uo, gerencia, numero_nivel) AS (
+                       
+                      SELECT uofun.id_funcionario,uo.id_uo,uo.gerencia, no.numero_nivel
+                      FROM orga.tuo_funcionario uofun
+                        inner join orga.tuo uo on uo.id_uo = uofun.id_uo
+                        inner join orga.tnivel_organizacional no on no.id_nivel_organizacional = uo.id_nivel_organizacional
+                      where uofun.fecha_asignacion <= v_fecha::date and (uofun.fecha_finalizacion is null or uofun.fecha_finalizacion >= v_fecha::date)
+                        and uofun.estado_reg = 'activo' and uofun.id_funcionario = v_id_funcionario
+                    UNION
+                       
+                     SELECT uofun.id_funcionario,euo.id_uo_padre,uo.gerencia,no.numero_nivel
+                     FROM orga.testructura_uo euo
+                        inner join orga.tuo uo on uo.id_uo = euo.id_uo_padre
+                        inner join orga.tnivel_organizacional no on no.id_nivel_organizacional = uo.id_nivel_organizacional
+                        inner join path hijo on hijo.id_uo = euo.id_uo_hijo
+                        left join orga.tuo_funcionario uofun on uo.id_uo = uofun.id_uo and uofun.estado_reg = 'activo' and uofun.fecha_asignacion <= v_fecha::date 
+                        and (uofun.fecha_finalizacion is null or uofun.fecha_finalizacion >= v_fecha::date)
+                                                    
+                    )
+                     SELECT 
+                        pxp.aggarray(id_uo),
+                        pxp.aggarray(id_funcionario),
+                        pxp.aggarray(gerencia),  
+                        pxp.aggarray(numero_nivel)
+                     Into
+                     vuo_id_uo, 
+                     vuo_id_funcionario,
+                     vuo_gerencia,
+                     vuo_numero_nivel
+                     FROM path
+                    WHERE numero_nivel not in (7,8,9); 
+                
+                ---recuperamos los id_funcionarios de gg --#7  
+                v_bandera_GG	= pxp.f_get_variable_global('orga_codigo_gerencia_general');
+                
+                v_fecha_now = now();
+                v_record_gg = orga.f_obtener_gerente_x_codigo_uo(v_bandera_GG,v_fecha_now);
+                v_record_id_funcionario_gg	= v_record_gg[1]::integer;
+  
+                    
+                 --Raise exception 'funcionario %',v_record_id_funcionario_gaf;    
+                 --Raise exception 'funcionario %',vuo_id_funcionario[1];
+                 IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
+                       IF v_id_funcionario = vuo_id_funcionario[1] THEN 
+                          v_id_funcionario_encar = vuo_id_funcionario[2]::INTEGER;
+                       ELSE
+                          v_id_funcionario_encar = vuo_id_funcionario[1]::INTEGER;
+                       END IF;
+                  ELSE 
+                          v_id_funcionario_encar  = v_record_id_funcionario_gg::integer;
+                  END IF ;
+                 --recuperamos el correo del encargado --#7 
+                 SELECT
+                    fu.desc_funcionario1,
                     fun.email_empresa
                  INTO
+                    v_desc_funcionario_encar,
+                    v_correo_encar
+                 FROM orga.tfuncionario fun
+                 LEFT JOIN orga.vfuncionario fu on fu.id_funcionario = fun.id_funcionario
+                 WHERE fun.id_funcionario = v_id_funcionario_encar;
+                 --insertamos en la tabla temporal --#7 
+                 INSERT INTO 
+                            temporal
+                            (
+                              id_funcionario, 
+                              email_empresa, 
+                              cargo,       
+                              enviar       
+                             )VALUES(
+                             vuo_id_funcionario[1]::INTEGER,
+                             v_correo_encar,
+                             'encargado',
+                             TRUE                       
+                             );                                    
+                 --#5 buscamos el correo del funcionario solicitante
+                
+                 if pxp.f_existe_parametro(p_tabla,'id_funcionario_wf') and v_parametros.id_funcionario_wf is not null then
+                      v_id_funcionario = v_parametros.id_funcionario_wf;
+                 end if;
+                 SELECT
+                    fu.desc_funcionario1,
+                    fun.email_empresa
+                 INTO
+                    v_desc_funcionario,
                     v_correo
                  FROM orga.tfuncionario fun
-                 WHERE fun.id_funcionario = v_parametros.id_funcionario_wf ;
-                                                         
+                 LEFT JOIN orga.vfuncionario fu on fu.id_funcionario = fun.id_funcionario                 
+                 WHERE fun.id_funcionario = v_id_funcionario ;
+                 
+                 --insertamos en la tabla temporal--#7 
+                  INSERT INTO 
+                            temporal
+                            (
+                              id_funcionario, 
+                              email_empresa, 
+                              cargo,       
+                              enviar       
+                             )VALUES(
+                             v_parametros.id_funcionario_wf,
+                             v_correo,
+                             'solicitante',
+                             TRUE                       
+                             );
+    
+                 --Raise exception 'v_correo_encar %',v_correo_encar;                                                                            
                   --Acciones por estado siguiente que podrian realizarse
                   --#5 Insertamos una alarma para el funcionario solicitante
                   --#5 se aumento obs de wf en correo y alarma
-                  if v_codigo_estado_siguiente in ('resuelto','rechazado') then --#5  
-
-                            IF v_codigo_estado_siguiente = 'resuelto' THEN
-                                v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolución del soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br> Agradecerle que lo revise para su conformidad.<br>  Saludos<br>';
-                                v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
-                            ELSIF v_codigo_estado_siguiente = 'rechazado' THEN
+                  if v_codigo_estado_siguiente in ('rechazado') then --#5  
+                            IF v_codigo_estado_siguiente = 'rechazado' THEN
                                  v_descripcion_correo = '<font color="FF0000" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre El Rechazo de la solicitud de soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br>Para mas información comuníquese con los administradores. Saludos<br>';
-                                v_titulo = 'Servicio de Soporte Rechazado: '||v_nro_tramite;             
+                                 v_titulo = 'Servicio de Soporte Rechazado: '||v_nro_tramite;             
                             END IF;
       
                              v_id_alarma = param.f_inserta_alarma(
@@ -387,7 +545,61 @@ BEGIN
                                     v_titulo,--titulo correo
                                     v_correo --correo funcionario
                                    );
-                  end if;
+                  ELSIF v_codigo_estado_siguiente in ('pendiente','resuelto') then--#7 
+                                
+                                IF v_codigo_estado_siguiente = 'resuelto' THEN--#7 
+                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolución del soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br> Agradecerle que lo revise para su conformidad.<br>  Saludos<br>Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
+                                      v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
+                                    IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
+                                        UPDATE temporal SET
+                                            enviar = false
+                                        WHERE cargo in ('administrador');
+                                    ELSE
+                                          UPDATE temporal SET
+                                              enviar = false
+                                          WHERE cargo in ('encargado','administrador');
+                                    END IF;                        
+                                ELSIF v_codigo_estado_siguiente = 'pendiente' THEN--#7 
+                                       --raise exception 'ds %', v_desc_funcionario;
+                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">Solicitud Soporte</font> </font><br>Estado Actual :<b>'||v_codigo_estado_siguiente||'</b><br><b></b>El motivo de la presente es Solicitar el soporte con el número de trámite : <b>'||v_nro_tramite||'</b>.<br><br><b>Detalle :</b><br>'||lower(v_descripcion_sol)||'.<br><br> Agradecerles que lo revisen por Favor.<br> Atte. '||v_desc_funcionario||'<br>Saludos<br>Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
+                                      v_titulo = 'Solicitud de Soporte: '||v_nro_tramite;
+                                     IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
+                                          UPDATE temporal SET
+                                              enviar = false
+                                          WHERE cargo in ('solicitante');
+                                     ELSE
+                                          UPDATE temporal SET
+                                              enviar = false
+                                          WHERE cargo in ('encargado','solicitante');
+                                     END IF; 
+                                END IF;
+                                
+                                FOR v_cor IN(
+                                    SELECT 
+                                        id_funcionario, 
+                                        email_empresa, 
+                                        cargo,       
+                                        enviar 
+                                    FROM temporal
+                                    WHERE enviar = true                                                         
+                                )LOOP    
+                                v_id_alarma = param.f_inserta_alarma(
+                                    v_cor.id_funcionario,
+                                    v_descripcion_correo,--par_descripcion
+                                    v_acceso_directo,--acceso directo
+                                    now()::date,--par_fecha: Indica la fecha de vencimiento de la alarma
+                                    v_tipo_noti, --notificacion
+                                    v_titulo,  --asunto
+                                    p_id_usuario,
+                                    v_clase, --clase
+                                    v_titulo,--titulo
+                                    v_parametros_ad,--par_parametros varchar,   parametros a mandar a la interface de acceso directo
+                                    p_id_usuario, --usuario a quien va dirigida la alarma
+                                    v_titulo,--titulo correo
+                                    v_cor.email_empresa --correo funcionario
+                                   );
+                                 END LOOP;  
+                  END IF;
                   --------------------------------------
                   -- Registra los procesos disparados
                   --------------------------------------

@@ -9,6 +9,9 @@ HISTORIAL DE MODIFICACIONES:
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico el grid de la vizualizacion para que muestre lo oculto ante como usr reg y fecha reg
  #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
+ #6 EndeEtr           18/04/2019            EGS                 multilinea en observaciones
+ #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
+
  * 
  * */
 
@@ -402,7 +405,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				maxLength:-5
 			},
 				type:'TextField',
-				filters:{pfiltro:'help.nro_tramite',type:'string'},
+				filters:{pfiltro:'help.estado',type:'string'},//#7
 				id_grupo:1,
 				grid:true,
 				form:false
@@ -417,6 +420,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				maxLength:-5
 			},
 				type:'TextField',
+				filters:{pfiltro:'funi.desc_funcionario1',type:'string'},
 				id_grupo:1,
 				grid:true,
 				form:false
@@ -428,7 +432,11 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 250,
-				maxLength:-5
+				maxLength:-5,
+				renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                          metaData.css = 'multilineColumn'; 
+                          return String.format('<div class="gridmultiline">{0}</div>', value);// #6
+                     }
 			},
 				type:'TextField',
 				filters:{pfiltro:'ew.obs',type:'string'},
