@@ -21,7 +21,6 @@ $body$
  #5             09/04/2019              EGS EndeEtr         Se agrego el envio de correos al solicitante en los estados rechazado y resuelto
  #7             22/04/2019              EGS EndeEtr         Se envia correos para los administradores y el superior del solicitante en estado pendiente
                                                             y correos al superior y solicitante en estado resuelto
- #8             23/04/2019              EGS EndeEtr         actualizacion en correos cuando funcionario superior es null inmediato superior y nivel uo 5 se toma como funcionario base
  ***************************************************************************/
 
 DECLARE
@@ -97,7 +96,6 @@ DECLARE
     v_record_id_funcionario_gg      integer; --#7 
     v_record_id_funcionario_gaf     integer;--#7  
     v_fecha_now                     date;--#7 
-    v_id_funcionario_array          integer;
 
     
 BEGIN
@@ -447,7 +445,7 @@ BEGIN
                      vuo_gerencia,
                      vuo_numero_nivel
                      FROM path
-                    WHERE numero_nivel not in (5,7,8,9)and id_funcionario is not null;--#8 
+                    WHERE numero_nivel not in (7,8,9); 
                 
                 ---recuperamos los id_funcionarios de gg --#7  
                 v_bandera_GG	= pxp.f_get_variable_global('orga_codigo_gerencia_general');
@@ -455,8 +453,8 @@ BEGIN
                 v_fecha_now = now();
                 v_record_gg = orga.f_obtener_gerente_x_codigo_uo(v_bandera_GG,v_fecha_now);
                 v_record_id_funcionario_gg	= v_record_gg[1]::integer;
-                 
-                   
+  
+                    
                  --Raise exception 'funcionario %',v_record_id_funcionario_gaf;    
                  --Raise exception 'funcionario %',vuo_id_funcionario[1];
                  IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
@@ -493,10 +491,10 @@ BEGIN
                              TRUE                       
                              );                                    
                  --#5 buscamos el correo del funcionario solicitante
-                
+                /*
                  if pxp.f_existe_parametro(p_tabla,'id_funcionario_wf') and v_parametros.id_funcionario_wf is not null then
                       v_id_funcionario = v_parametros.id_funcionario_wf;
-                 end if;
+                 end if;*/
                  SELECT
                     fu.desc_funcionario1,
                     fun.email_empresa
@@ -548,7 +546,7 @@ BEGIN
                                     v_correo --correo funcionario
                                    );
                   ELSIF v_codigo_estado_siguiente in ('pendiente','resuelto') then--#7 
-                                
+                                --raise exception 'v_desc_funcionario %',v_desc_funcionario;
                                 IF v_codigo_estado_siguiente = 'resuelto' THEN--#7 
                                       v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolución del soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br> Agradecerle que lo revise para su conformidad.<br>  Saludos<br>Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
                                       v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
