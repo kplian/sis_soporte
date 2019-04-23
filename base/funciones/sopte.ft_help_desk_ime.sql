@@ -493,10 +493,10 @@ BEGIN
                              TRUE                       
                              );                                    
                  --#5 buscamos el correo del funcionario solicitante
-                
+                /*
                  if pxp.f_existe_parametro(p_tabla,'id_funcionario_wf') and v_parametros.id_funcionario_wf is not null then
                       v_id_funcionario = v_parametros.id_funcionario_wf;
-                 end if;
+                 end if;*/
                  SELECT
                     fu.desc_funcionario1,
                     fun.email_empresa
@@ -548,7 +548,6 @@ BEGIN
                                     v_correo --correo funcionario
                                    );
                   ELSIF v_codigo_estado_siguiente in ('pendiente','resuelto') then--#7 
-                                
                                 IF v_codigo_estado_siguiente = 'resuelto' THEN--#7 
                                       v_descripcion_correo='<font color="99CC00" size="5"><font size="4">NOTIFICACIÓN SOPORTE</font> </font><br><br><b></b>El motivo de la presente es notificarle sobre la resolución del soporte con número de trámite : <b>'||v_nro_tramite||'</b>.<br>'||v_obs||'.<br> Agradecerle que lo revise para su conformidad.<br>  Saludos<br>Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
                                       v_titulo = 'Servicio de Soporte Resuelto: '||v_nro_tramite;
