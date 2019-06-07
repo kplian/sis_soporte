@@ -11,7 +11,7 @@ HISTORIAL DE MODIFICACIONES:
  #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
  #6 EndeEtr           18/04/2019            EGS                 multilinea en observaciones
  #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
-
+ #9 EndeEtr			  06/06/2019			EGS					Se aumento la hora del registro de la solicitud
  * 
  * */
 
@@ -166,8 +166,11 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				 	 prioridad = prioridad.split(",");  
                         console.log('record',record); 
                  var fecha = '"'+record.data['fecha_reg']+'"';
-                     fecha = Ext.util.Format.date(fecha,'d/m/Y');        
-                        
+                     fecha = Ext.util.Format.date(fecha,'d/m/Y'); 
+                 var hms = Ext.util.Format.date(record.data['fecha_reg'],'H:i:s'); 
+  
+                  console.log('hora',hms); 
+    
                          				
 				if(record.json.nombreVista == 'HelpDesk' ){
 						return '<tpl for="."><div class="x-combo-list-item"><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p></div></tpl>';
@@ -181,8 +184,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 						</p><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
 						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
 						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
-						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
-						</div></tpl>';
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'  '+hms+'</font></p>\
+						</div></tpl>';//#9
 							}
 							 if (record.data['desc_prioridad']==prioridad[1]){
 						return '<tpl for="."><div class="x-combo-list-item">\
@@ -191,8 +194,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
 						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
 						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
-						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
-						</div></tpl>';
+						</p><p><font><b>Fecha Registro: </b>'+fecha+' '+hms+'</font></p>\
+						</div></tpl>';//#9
 							}
 							 if (record.data['desc_prioridad']==prioridad[2]){
 						return '<tpl for="."><div class="x-combo-list-item">\
@@ -201,8 +204,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
 						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
 						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
-						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
-						</div></tpl>';
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'  '+hms+'</font></p>\
+						</div></tpl>';//#9
 							}
 							if (record.data['desc_prioridad']==prioridad[3]){
 						return '<tpl for="."><div class="x-combo-list-item">\
@@ -211,8 +214,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 						<p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p>\
 						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
 						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
-						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
-						</div></tpl>';
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'  '+hms+'</font></p>\
+						</div></tpl>';//#9
 							}
 						if (record.data['desc_prioridad']== '' ){
 						return '<tpl for="."><div class="x-combo-list-item">\
@@ -220,8 +223,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 						<p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p>\
 						<p><font><b>Funcionario Solicitante: </b>'+record.data['desc_funcionario']+'</font></p>\
 						</p><p><font><b>Usuario Registro: </b>'+record.data['usr_reg']+'</font></p>\
-						</p><p><font><b>Fecha Registro: </b>'+fecha+'</font></p>\
-						</div></tpl>';
+						</p><p><font><b>Fecha Registro: </b>'+fecha+'  '+hms+'</font></p>\
+						</div></tpl>';//#9
 						}
 				}
 				if(record.json.nombreVista == '' ){
@@ -597,7 +600,10 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	bsave:true,
     sigEstado:function(){                   
       var data = this.getSelectedData();
-      this.objWizard = Phx.CP.loadWindows('../../../sis_workflow/vista/estado_wf/FormEstadoWf.php',
+      console.log('data',data);
+
+      var url ='../../../sis_workflow/vista/estado_wf/FormEstadoWf.php';
+      this.objWizard = Phx.CP.loadWindows( url ,
                                 'Estado de Wf',
                                 {
                                     modal:true,
@@ -617,9 +623,11 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                                             }],
                                     
                                     scope:this
-                                 });        
+                                 });
+     
                
      },
+     
       onSaveWizard:function(wizard,resp){
 
         Ext.Ajax.request({
