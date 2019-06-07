@@ -7,28 +7,29 @@ CREATE OR REPLACE FUNCTION sopte.ft_help_desk_ime (
 RETURNS varchar AS
 $body$
 /**************************************************************************
- SISTEMA:		Soprote
- FUNCION: 		sopte.ft_help_desk_ime
+ SISTEMA:        Soprote
+ FUNCION:         sopte.ft_help_desk_ime
  DESCRIPCION:   Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'
- AUTOR: 		 (eddy.gutierrez)
- FECHA:	        22-02-2019 19:07:11
- COMENTARIOS:	
+ AUTOR:          (eddy.gutierrez)
+ FECHA:            22-02-2019 19:07:11
+ COMENTARIOS:    
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
-#ISSUE				FECHA				AUTOR				DESCRIPCION
- #0				22-02-2019 19:07:11		EGS EndeETR			Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'	
- #0				22-02-2019 19:07:11		EGS EndeETR			Se agrego el campo sub_tipo
- #5             09/04/2019              EGS EndeEtr         Se agrego el envio de correos al solicitante en los estados rechazado y resuelto
- #7             22/04/2019              EGS EndeEtr         Se envia correos para los administradores y el superior del solicitante en estado pendiente
-                                                            y correos al superior y solicitante en estado resuelto
- #8             23/04/2019              EGS EndeEtr         actualizacion en correos cuando funcionario superior es null inmediato superior y nivel uo 5 se toma como funcionario base
+#ISSUE                FECHA                AUTOR                DESCRIPCION
+ #0             22-02-2019 19:07:11     EGS EndeETR             Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'wf.thelp_desk'    
+ #0             22-02-2019 19:07:11     EGS EndeETR             Se agrego el campo sub_tipo
+ #5             09/04/2019              EGS EndeEtr             Se agrego el envio de correos al solicitante en los estados rechazado y resuelto
+ #7             22/04/2019              EGS EndeEtr             Se envia correos para los administradores y el superior del solicitante en estado pendiente
+                                                                y correos al superior y solicitante en estado resuelto
+ #8             23/04/2019              EGS EndeEtr             actualizacion en correos cuando funcionario superior es null inmediato superior y nivel uo 5 se toma como funcionario base
+ #9 EndeETR     06/06/2019              EGS                     Se agrego que las alarmas inserte el proceso_wf y el estado_wf         
  ***************************************************************************/
 
 DECLARE
 
-	v_nro_requerimiento    	integer;
-	v_parametros           	record;
-	v_id_requerimiento      integer;
+    v_nro_requerimiento        integer;
+    v_parametros               record;
+    v_id_requerimiento      integer;
     v_resp                  varchar;
     v_nombre_funcion        text;
     v_mensaje_error         text;
@@ -417,7 +418,7 @@ BEGIN
                  END LOOP;
                                                        
                  --recuperamos los funcionarios encargado de los funcionarios solicitantes --#7 
-                   WITH RECURSIVE path( id_funcionario, id_uo, gerencia, numero_nivel) AS (
+                  WITH RECURSIVE path( id_funcionario, id_uo, gerencia, numero_nivel) AS (
                        
                       SELECT uofun.id_funcionario,uo.id_uo,uo.gerencia, no.numero_nivel
                       FROM orga.tuo_funcionario uofun
@@ -450,11 +451,11 @@ BEGIN
                     WHERE numero_nivel not in (5,7,8,9)and id_funcionario is not null;--#8 
                 
                 ---recuperamos los id_funcionarios de gg --#7  
-                v_bandera_GG	= pxp.f_get_variable_global('orga_codigo_gerencia_general');
+                v_bandera_GG    = pxp.f_get_variable_global('orga_codigo_gerencia_general');
                 
                 v_fecha_now = now();
                 v_record_gg = orga.f_obtener_gerente_x_codigo_uo(v_bandera_GG,v_fecha_now);
-                v_record_id_funcionario_gg	= v_record_gg[1]::integer;
+                v_record_id_funcionario_gg    = v_record_gg[1]::integer;
                  
                    
                  --Raise exception 'funcionario %',v_record_id_funcionario_gaf;    
@@ -465,8 +466,10 @@ BEGIN
                        ELSE
                           v_id_funcionario_encar = vuo_id_funcionario[1]::INTEGER;
                        END IF;
-                  ELSE 
+                  ELSIF v_id_funcionario = v_record_id_funcionario_gg then
                           v_id_funcionario_encar  = v_record_id_funcionario_gg::integer;
+                  ELSE 
+                        v_id_funcionario_encar = v_id_funcionario;
                   END IF ;
                  --recuperamos el correo del encargado --#7 
                  SELECT
@@ -545,7 +548,10 @@ BEGIN
                                     v_parametros_ad,--par_parametros varchar,   parametros a mandar a la interface de acceso directo
                                     p_id_usuario, --usuario a quien va dirigida la alarma
                                     v_titulo,--titulo correo
-                                    v_correo --correo funcionario
+                                    v_correo, --correo funcionario                                
+                                    null,--#9
+                                    v_id_proceso_wf,--#9
+                                    v_id_estado_actual--#9
                                    );
                   ELSIF v_codigo_estado_siguiente in ('pendiente','resuelto') then--#7 
                                 IF v_codigo_estado_siguiente = 'resuelto' THEN--#7 
@@ -597,7 +603,10 @@ BEGIN
                                     v_parametros_ad,--par_parametros varchar,   parametros a mandar a la interface de acceso directo
                                     p_id_usuario, --usuario a quien va dirigida la alarma
                                     v_titulo,--titulo correo
-                                    v_cor.email_empresa --correo funcionario
+                                    v_cor.email_empresa , --correo funcionario                                
+                                    null,--#9
+                                    v_id_proceso_wf,--#9
+                                    v_id_estado_actual--#9
                                    );
                                  END LOOP;  
                   END IF;

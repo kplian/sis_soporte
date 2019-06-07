@@ -7,7 +7,8 @@
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
  *  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana 
-*/
+ #9 EndeEtr			  07/06/2019			EGS					Se agrego que el boton de tipo y prioridades sea visible en el estado de asignacion
+ * */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -50,7 +51,7 @@ Phx.vista.HelpDeskAsis = {
 		this.addButton('btnatrasignacion',
 	            {
 	                text: 'Subtipo/Priorida',
-	                grupo:[0],
+	                grupo:[0,1],//#9 
 	                iconCls: 'bchecklist',
 	                disabled: true,
 	                handler: this.atributoAsignacion,
