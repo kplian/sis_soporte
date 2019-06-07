@@ -601,36 +601,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
     sigEstado:function(){                   
       var data = this.getSelectedData();
       console.log('data',data);
-       /*     
-      if(data.estado = 'asignado'){
-      	
-      	console.log("HOLA");
-      	var url ='../../../sis_soporte/vista/help_desk/FormEstadoWfH.php';
-      	this.objWizard = Phx.CP.loadWindows( url ,
-                                'Estado de Wf',
-                                {
-                                    modal:true,
-                                    width:700,
-                                    height:450
-                                }, {data:{
-                                	   id_help_desk:data.id_help_desk,
-                                       id_estado_wf:data.id_estado_wf,
-                                       id_proceso_wf:data.id_proceso_wf,
-                                       id_tipo :data.id_tipo,
-                                       id_sub_tipo :data.id_tipo_sub
-                                    	
-                                    }}, this.idContenedor,'FormEstadoWfH',
-                                {
-                                    config:[{
-                                              event:'beforesave',
-                                              delegate: this.onSaveWizard,
-                                              
-                                            }],
-                                    
-                                    scope:this
-                                 });
-      	
-      }else{*/
+
       var url ='../../../sis_workflow/vista/estado_wf/FormEstadoWf.php';
       this.objWizard = Phx.CP.loadWindows( url ,
                                 'Estado de Wf',
@@ -653,7 +624,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                                     
                                     scope:this
                                  });
-      // }        
+     
                
      },
      
