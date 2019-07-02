@@ -600,8 +600,10 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
     sigEstado:function(){                   
       var data = this.getSelectedData();
       configExtra = [],
-      this.eventosExtra = function(obj){};   
-
+      this.eventosExtra = function(obj){};
+         
+	  if (data.estado != 'borrador' ) { //#10
+	  	
 	    configExtra = [//#10
 			    	{
 						//configuracion del componente
@@ -796,6 +798,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				}, obj);	
 	
 			};
+	   };
 
       var url ='../../../sis_workflow/vista/estado_wf/FormEstadoWf.php';
       this.objWizard = Phx.CP.loadWindows( url ,
