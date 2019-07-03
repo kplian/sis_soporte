@@ -363,7 +363,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 		{
 			config:{
 				name: 'fecha',
-				fieldLabel: 'fechawww',
+				fieldLabel: 'fecha',
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
