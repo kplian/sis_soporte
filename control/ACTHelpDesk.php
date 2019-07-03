@@ -31,7 +31,6 @@ class ACTHelpDesk extends ACTbase{
 			}
 			
 		}
-
 		
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);

@@ -23,6 +23,8 @@ $body$
                                                                 y correos al superior y solicitante en estado resuelto
  #8             23/04/2019              EGS EndeEtr             actualizacion en correos cuando funcionario superior es null inmediato superior y nivel uo 5 se toma como funcionario base
  #9 EndeETR     06/06/2019              EGS                     Se agrego que las alarmas inserte el proceso_wf y el estado_wf         
+ #10 EndeEtr    1/07/2019			    EGS					    se agrego campos extras a wf
+
  ***************************************************************************/
 
 DECLARE
@@ -337,6 +339,14 @@ BEGIN
                       v_obs=v_parametros.obs;
                   else
                       v_obs='---';
+                  end if;
+                  
+                  if pxp.f_existe_parametro(p_tabla,'id_sub_tipo') then --#10
+                      v_id_tipo_sub=v_parametros.id_sub_tipo;
+
+                  end if;
+                  if pxp.f_existe_parametro(p_tabla,'prioridad') then  --#10
+                      v_prioridad=v_parametros.prioridad;
                   end if;
 
 

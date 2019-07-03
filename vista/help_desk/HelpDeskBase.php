@@ -12,6 +12,7 @@ HISTORIAL DE MODIFICACIONES:
  #6 EndeEtr           18/04/2019            EGS                 multilinea en observaciones
  #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
  #9 EndeEtr			  06/06/2019			EGS					Se aumento la hora del registro de la solicitud
+ #10 EndeEtr		  1/07/2019			    EGS					se agrego campos extras a wf
  * 
  * */
 
@@ -160,17 +161,15 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				gwidth: 350,
 				maxLength:-5,
 				renderer:function(value,metaData, record,rowIndex, colIndex, store){
-				console.log('record....', value, metaData, record,'-->',rowIndex,'<---',colIndex,'<xxxxx>',store);
+				//console.log('record....', value, metaData, record,'-->',rowIndex,'<---',colIndex,'<xxxxx>',store);
 				
 				 var prioridad = store.data.prioridad; 
 				 	 prioridad = prioridad.split(",");  
-                        console.log('record',record); 
                  var fecha = '"'+record.data['fecha_reg']+'"';
                      fecha = Ext.util.Format.date(fecha,'d/m/Y'); 
                  var hms = Ext.util.Format.date(record.data['fecha_reg'],'H:i:s'); 
   
-                  console.log('hora',hms); 
-    
+   
                          				
 				if(record.json.nombreVista == 'HelpDesk' ){
 						return '<tpl for="."><div class="x-combo-list-item"><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p></div></tpl>';
@@ -364,7 +363,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 		{
 			config:{
 				name: 'fecha',
-				fieldLabel: 'fecha',
+				fieldLabel: 'fechawww',
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
@@ -600,7 +599,206 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	bsave:true,
     sigEstado:function(){                   
       var data = this.getSelectedData();
-      console.log('data',data);
+      configExtra = [],
+      this.eventosExtra = function(obj){};
+         
+	  if (data.estado != 'borrador' ) { //#10
+	  	
+	    configExtra = [//#10
+			    	{
+						//configuracion del componente
+						config:{
+								labelSeparator:'',
+								inputType:'hidden',
+								name: 'id_help_desk'
+						},
+						type:'Field',
+						form:true 
+					},
+					{
+						config: {
+							name: 'prioridad',
+							fieldLabel: 'Prioridad',
+							anchor: '100%',
+							tinit: false,
+							allowBlank: false,
+							origen: 'CATALOGO',
+							gdisplayField: 'prioridad',
+							hiddenName: 'tipo',
+							gwidth: 150,
+							baseParams:{
+								cod_subsistema:'SOPTE',
+								catalogo_tipo:'tprioridad_help_desk',
+								par_filtro:'cat.codigo'
+							},
+							valueField: 'codigo',
+							hidden: false,
+						},
+						type: 'ComboRec',
+						id_grupo: 0,
+						grid: true,
+						form: true
+					},	
+			
+					{
+			            config:{
+			                name:'id_tipo',
+			                fieldLabel:'Tipo',
+			                emptyText:'Tipo..',
+			                typeAhead: true,
+			                lazyRender:true,
+			                allowBlank: false,
+			                mode: 'remote',
+			                gwidth: 180,
+			                anchor: '100%',
+			                store: new Ext.data.JsonStore({
+			                    url: '../../sis_soporte/control/Tipo/listarTipo',
+			                    id: 'id_tipo',
+			                    root: 'datos',
+			                    sortInfo:{
+			                        field: 'id_tipo',
+			                        direction: 'ASC'
+			                    },
+			                    totalProperty: 'total',
+			                    fields: ['id_tipo','codigo','nombre','descripcion'],
+			                    // turn on remote sorting
+			                    remoteSort: true,
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' }
+			                }),
+			                               
+			                valueField: 'id_tipo',
+			                displayField: 'nombre',
+			                gdisplayField: 'nombre',
+			                hiddenName: 'id_tipo',
+			                forceSelection: true,
+			                typeAhead: false,
+			                triggerAction: 'all',
+			                lazyRender: true,
+			                mode:'remote',
+			                pageSize: 10,
+			                queryDelay: 1000,
+			                resizable: true,
+			                minChars:1,
+			                renderer : function(value, p, record) {
+			                    return String.format('{0}', record.data['nombre_tipo']);
+			                }
+			            },
+			            type:'ComboBox',
+			            id_grupo:1,
+			            filters:{pfiltro:'tip.nombre',type:'string'},
+			            grid:true,
+			            form:true,
+			            bottom_filter:true
+			        },
+					{
+			            config:{
+			                name:'id_sub_tipo',
+			                fieldLabel:'Sub Tipo',
+			                emptyText:'Sub Tipo..',
+			                typeAhead: true,
+			                lazyRender:true,
+			                allowBlank: false,
+			                mode: 'remote',
+			                gwidth: 180,
+			                anchor: '100%',
+			                store: new Ext.data.JsonStore({
+			                    url: '../../sis_soporte/control/Tipo/listarTipo',
+			                    id: 'id_tipo',
+			                    root: 'datos',
+			                    sortInfo:{
+			                        field: 'id_tipo',
+			                        direction: 'ASC'
+			                    },
+			                    totalProperty: 'total',
+			                    fields: ['id_tipo','codigo','nombre','descripcion'],
+			                    // turn on remote sorting
+			                    remoteSort: true,
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'no' }
+			                }),
+			                               
+			                valueField: 'id_tipo',
+			                displayField: 'nombre',
+			                gdisplayField: 'nombre',
+			                hiddenName: 'id_tipo',
+			                forceSelection: true,
+			                typeAhead: false,
+			                triggerAction: 'all',
+			                lazyRender: true,
+			                mode:'remote',
+			                pageSize: 10,
+			                queryDelay: 1000,
+			                resizable: true,
+			                minChars:1,
+			                renderer : function(value, p, record) {
+			                    return String.format('{0}', record.data['nombre_tipo']);
+			                }
+			            },
+			            type:'ComboBox',
+			            id_grupo:1,
+			            filters:{pfiltro:'tip.nombre',type:'string'},
+			            grid:true,
+			            form:true,
+			            bottom_filter:true
+			        },
+			    ];
+			    
+			    this.eventosExtra = function(obj){//#10
+				   console.log('obj',obj)
+				   
+				    obj.Cmp.prioridad.store.baseParams.query = obj.data.prioridad;
+					obj.Cmp.prioridad.store.load({params:{start:0,limit:50}, 
+					               callback : function (r) {                        
+					                    if (r.length > 0 ) {                        
+					                    	
+					                       obj.Cmp.prioridad.setValue(r[0].data.codigo);
+					                    }     
+					                                    
+					                }, scope : obj
+					            });
+				   
+				   
+				    obj.Cmp.id_help_desk.setValue(obj.data.id_help_desk);
+				    obj.Cmp.id_tipo.store.baseParams.query = obj.data.id_tipo;
+								    obj.Cmp.id_tipo.store.load({params:{start:0,limit:this.tam_pag}, 
+						               callback : function (r) {                        
+						                    if (r.length > 0 ) {                        
+						                    	
+						                       obj.Cmp.id_tipo.setValue(obj.data.id_tipo)
+					
+						                    }     
+						                                    
+						                }, scope : obj
+						            });
+				console.log('hola', obj.Cmp.id_tipo.getValue());	            
+				obj.Cmp.id_sub_tipo.store.baseParams.id_tipo_fk = obj.data.id_tipo;
+				obj.Cmp.id_sub_tipo.store.baseParams.query = obj.data.id_tipo_sub;
+								   obj.Cmp.id_sub_tipo.store.load({params:{start:0,limit:this.tam_pag}, 
+						               callback : function (r) { 
+						               	console.log('r',r);                       
+						                    if (r.length > 0 ) {                        
+						                    	
+												obj.Cmp.id_sub_tipo.setValue(obj.data.id_tipo_sub)
+							                    }     
+						                                    
+						                }, scope : obj
+						            });
+			
+				obj.Cmp.id_tipo.on('select',function(data,rec,ind){
+						obj.Cmp.id_sub_tipo.store.baseParams.id_tipo_fk = obj.Cmp.id_tipo.getValue();
+				         obj.Cmp.id_sub_tipo.store.load({params:{start:0,limit:this.tam_pag}, 
+						               callback : function (r) { 
+						               	console.log('r',r);                       
+						                    if (r.length > 0 ) {                        
+						                    	
+												obj.Cmp.id_sub_tipo.setValue(r[0].data.id_tipo)
+							                    }     
+						                                    
+						                }, scope : obj
+						            });
+				}, obj);	
+	
+			};
+	   };
 
       var url ='../../../sis_workflow/vista/estado_wf/FormEstadoWf.php';
       this.objWizard = Phx.CP.loadWindows( url ,
@@ -609,12 +807,19 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                                     modal:true,
                                     width:700,
                                     height:450
-                                }, {data:{
+                                }, 
+                                {
+                                	configExtra: configExtra,
+            						eventosExtra: this.eventosExtra,                              	
+                                	data:{
                                 	   id_help_desk:data.id_help_desk,
                                        id_estado_wf:data.id_estado_wf,
                                        id_proceso_wf:data.id_proceso_wf,
-                                    	
-                                    }}, this.idContenedor,'FormEstadoWf',
+                                       id_tipo : data.id_tipo,
+                                       id_tipo_sub : data.id_tipo_sub,//#10    captura los datos del formulario wf
+                                       prioridad : data.prioridad,//#10			
+                                   }
+                                 }, this.idContenedor,'FormEstadoWf',
                                 {
                                     config:[{
                                               event:'beforesave',
@@ -624,31 +829,49 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                                     
                                     scope:this
                                  });
-     
+             
                
      },
      
       onSaveWizard:function(wizard,resp){
-
-        Ext.Ajax.request({
-            url:'../../sis_soporte/control/HelpDesk/siguienteEstado',
-            params:{
-                id_help_desk:      wizard.data.id_help_desk,
-                id_proceso_wf_act:  resp.id_proceso_wf_act,
-                id_estado_wf_act:   resp.id_estado_wf_act,
-                id_tipo_estado:     resp.id_tipo_estado,
-                id_funcionario_wf:  resp.id_funcionario_wf,
-                id_depto_wf:        resp.id_depto_wf,
-                obs:                resp.obs,
-                json_procesos:      Ext.util.JSON.encode(resp.procesos)
-                },
-            success:this.successWizard,
-            failure: this.conexionFailure,
-            argument:{wizard:wizard},
-            timeout:this.timeout,
-            scope:this
-        });
-         
+		
+					Ext.Ajax.request({
+			            url:'../../sis_soporte/control/HelpDesk/siguienteEstado',
+			            params:{
+			                id_help_desk:      wizard.data.id_help_desk,
+			                id_proceso_wf_act:  resp.id_proceso_wf_act,
+			                id_estado_wf_act:   resp.id_estado_wf_act,
+			                id_tipo_estado:     resp.id_tipo_estado,
+			                id_funcionario_wf:  resp.id_funcionario_wf,
+			                id_depto_wf:        resp.id_depto_wf,
+			                obs:                resp.obs,
+			                json_procesos:      Ext.util.JSON.encode(resp.procesos),
+			                id_sub_tipo:			resp.id_sub_tipo,//#10
+			                prioridad:			resp.prioridad,//#10
+			                },
+			            success:function(){//#10
+			            	        	
+			            	        Ext.Ajax.request({
+								            url:'../../sis_soporte/control/HelpDesk/insertarAtributoAsignacion',
+								            params:{
+								                id_help_desk:  resp.id_help_desk,
+								                id_tipo :  	   resp.id_tipo,
+								                id_sub_tipo:   resp.id_sub_tipo,
+								                prioridad:     resp.prioridad,
+								                },
+								            success:this.successWizard,
+								            failure: this.conexionFailure,
+								            argument:{wizard:wizard},
+								            timeout:this.timeout,
+								            scope:this
+								        });
+			            },
+			            failure: this.conexionFailure,
+			            argument:{wizard:wizard},
+			            timeout:this.timeout,
+			            scope:this
+			        });		
+   
     },
        successWizard:function(resp){
         Phx.CP.loadingHide();
@@ -678,7 +901,6 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 		
 	}, 
 	onAntEstado: function(wizard,resp){
-		console.log('resp',wizard.data.id_help_desk);
         Phx.CP.loadingShow();
         var operacion = 'cambiar';
 

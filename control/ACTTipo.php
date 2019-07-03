@@ -7,6 +7,8 @@
 *@description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
 	ISUE				FECHA				AUTHOR					DESCRIPCION	
  	#8					18/03/2019			EGS						Se agrega el poder de editar el tipo y recarga los subtipos correspondientes
+ *  #10 EndeEtr		  1/07/2019			    EGS					    se agrego parametros para combo
+ * 
 */
 
 class ACTTipo extends ACTbase{    
@@ -15,6 +17,10 @@ class ACTTipo extends ACTbase{
 		$this->objParam->defecto('ordenacion','id_tipo');
 
 		$this->objParam->defecto('dir_ordenacion','asc');
+		
+		$this->objParam->parametros_consulta['cantidad'] = '10000';	// #10
+		$this->objParam->parametros_consulta['puntero'] = '0';		//#10
+		
 		//#8
 		if($this->objParam->getParametro('id_tipo')!= '' ){
 		    $this->objParam->addFiltro("tipsop.id_tipo =" . $this->objParam->getParametro('id_tipo')." ");

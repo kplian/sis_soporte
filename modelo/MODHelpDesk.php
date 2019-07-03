@@ -7,7 +7,9 @@
 *@description Clase que envia los parametros requeridos a la Base de datos para la ejecucion de las funciones, y que recibe la respuesta del resultado de la ejecucion de las mismas
  * 	ISUE				FECHA				AUTHOR					DESCRIPCION	
  	#8					18/03/2019			EGS						Se  agrega y diferencia tipo y sub_tipo
-*/
+ 	#10 EndeEtr		  1/07/2019			    EGS					    se agrego campos extras a wf
+ * 
+ * */
 
 class MODHelpDesk extends MODbase{
 	
@@ -147,7 +149,8 @@ class MODHelpDesk extends MODbase{
 
         $this->setParametro('id_depto_lb','id_depto_lb','int4');
 		$this->setParametro('id_cuenta_bancaria','id_cuenta_bancaria','int4');
-
+		$this->setParametro('id_sub_tipo','id_sub_tipo','varchar');//#10
+		$this->setParametro('prioridad','prioridad','varchar');//#10
         //Ejecuta la instruccion
         $this->armarConsulta();
         $this->ejecutarConsulta();
