@@ -8,7 +8,9 @@
  *  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana 
  #9 EndeEtr			  07/06/2019			EGS					Se agrego que el boton de tipo y prioridades sea visible en el estado de asignacion
- * */
+ #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf
+ #12 EndeEtr            09/10/2019          EGS                 e arrregla bug para paginacion
+ *  * */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -28,7 +30,8 @@ Phx.vista.HelpDeskAsis = {
 		this.init();
 		this.iniciarEventos();
 		this.finCons = true;
-		this.load({params:{start:0, limit:this.tam_pag ,estado:'pendiente',nombreVista: this.nombreVista}});
+        this.store.baseParams={estado:'pendiente',nombreVista: this.nombreVista};//#12
+		this.load({params:{start:0, limit:this.tam_pag }});
 		
 		this.addButton('ant_estado',
 						{argument: {estado: 'anterior'},
@@ -118,6 +121,8 @@ Phx.vista.HelpDeskAsis = {
         this.getBoton('diagrama_gantt').enable();
 		this.getBoton('btnChequeoDocumentosWf').enable();
         this.getBoton('btnatrasignacion').enable();
+        this.getBoton('btnObs').enable();//#11
+
          if (data.estado == 'resuelto') {//#4
          	this.getBoton('sig_estado').disable();
          } else{
@@ -135,7 +140,9 @@ Phx.vista.HelpDeskAsis = {
             this.getBoton('diagrama_gantt').disable();
             this.getBoton('btnatrasignacion').disable();
         	this.getBoton('ant_estado').disable();
-    		this.getBoton('sig_estado').disable();  
+    		this.getBoton('sig_estado').disable(); 
+            this.getBoton('btnObs').disable();//#11
+ 
              
         }
        return tb
