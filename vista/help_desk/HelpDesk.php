@@ -9,7 +9,8 @@
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico las ventanas atab a solo una ventana   
  #6 EndeEtr           18/04/2019            EGS                 Funcionarios solo vigentes
-     
+ #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf
+ #12 EndeEtr            09/10/2019          EGS                 e arrregla bug para paginacion
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -33,10 +34,10 @@ Phx.vista.HelpDesk = {
 		this.iniciarEventos();
 		this.finCons = true;
 		
-		this.store.baseParams.id_usuario = Phx.CP.config_ini.id_usuario;
+		this.store.baseParams={id_usuario:Phx.CP.config_ini.id_usuario,nombreVista: this.nombreVista};//#12
 		console.log('id_funcionario',Phx.CP.config_ini.id_funcionario) ;             
 		//this.load({params:{start:0, limit:this.tam_pag ,estado:'borrador',nombreVista: this.nombreVista}});//#4
-		this.load({params:{start:0, limit:this.tam_pag ,nombreVista: this.nombreVista}});
+		this.load({params:{start:0, limit:this.tam_pag }});
 
 		
 		this.addButton('ant_estado',
@@ -126,6 +127,7 @@ Phx.vista.HelpDesk = {
         Phx.vista.HelpDesk.superclass.preparaMenu.call(this,n);
         this.getBoton('diagrama_gantt').enable();
 		this.getBoton('btnChequeoDocumentosWf').enable();
+        this.getBoton('btnObs').enable();//#11
 
          if (data.estado == 'borrador') {
          	this.getBoton('ant_estado').disable();
@@ -149,7 +151,9 @@ Phx.vista.HelpDesk = {
 			this.getBoton('btnChequeoDocumentosWf').disable();          
             this.getBoton('diagrama_gantt').disable();
         	this.getBoton('ant_estado').disable();
-    		this.getBoton('sig_estado').disable();     
+    		this.getBoton('sig_estado').disable();
+            this.getBoton('btnObs').disable();//#11
+     
         }
        return tb
     },
