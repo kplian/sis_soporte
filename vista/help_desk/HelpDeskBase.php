@@ -13,7 +13,7 @@ HISTORIAL DE MODIFICACIONES:
  #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
  #9 EndeEtr			  06/06/2019			EGS					Se aumento la hora del registro de la solicitud
  #10 EndeEtr		  1/07/2019			    EGS					se agrego campos extras a wf
- * 
+ #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf  
  * */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -38,7 +38,15 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	                disabled: true,
 	                handler: this.loadCheckDocumentosWf,
 	                tooltip: '<b>Documentos del Problema</b><br/>Permite ver los documentos asociados al NRO de trámite.'
-	            });		
+	            });	
+	     this.addButton('btnObs',{//#11
+                    text :'Obs Wf',
+                    grupo:[0,1,2],
+                    iconCls : 'bchecklist',
+                    disabled: true,
+                    handler : this.onOpenObs,
+                    tooltip : '<b>Observaciones</b><br/><b>Observaciones del WF</b>'
+         });	
 	},
 	/* //#4
 	arrayDefaultColumHidden:['fecha_mod','usr_mod','id_proceso_wf','id_estado_wf','estado_reg','id_usuario_ai','usuario_ai'],
@@ -50,6 +58,28 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 	                //'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Fecha Modificación:&nbsp;&nbsp;</b> {fecha_mod}</p>'
 	            )
 	    }) ,*/
+	   
+	  onOpenObs:function() {//#11
+            var rec=this.sm.getSelected();
+            
+            var data = {
+            	id_proceso_wf: rec.data.id_proceso_wf,
+            	id_estado_wf: rec.data.id_estado_wf,
+            	num_tramite: rec.data.num_tramite
+            }
+            
+            Phx.CP.loadWindows('../../../sis_workflow/vista/obs/Obs.php',
+                    'Observaciones del WF',
+                    {
+                        width:'80%',
+                        height:'70%'
+                    },
+                    data,
+                    this.idContenedor,
+                    'Obs'
+        )
+    },
+	   
 
     	loadCheckDocumentosWf:function() {
             var rec=this.sm.getSelected();
