@@ -83,5 +83,19 @@ select pxp.f_insert_testructura_gui ('TIPSOP', 'CONFSOP');
 
 
 /********************************************F-DEP-EGS-SOPTE-0-27/02/2019*************************************/
+/********************************************I-DEP-EGS-SOPTE-1-12/12/2019*************************************/
 
+ALTER TABLE sopte.thelp_desk
+  ADD CONSTRAINT thelp_desk_fk_id_tipo FOREIGN KEY (id_tipo)
+    REFERENCES sopte.ttipo(id_tipo)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE;
 
+ALTER TABLE sopte.ttipo
+  ADD CONSTRAINT ttipo_fk_id_tipo FOREIGN KEY (id_tipo_fk)
+    REFERENCES sopte.ttipo(id_tipo)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE;
+/********************************************F-DEP-EGS-SOPTE-1-12/12/2019*************************************/
