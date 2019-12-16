@@ -430,7 +430,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
         {//#14
             config:{
                 name: 'numero_ref',
-                fieldLabel: 'Numero Referencial',
+                fieldLabel: 'Número Referencial',//#14
                 allowBlank: true,
                 anchor: '80%',
                 gwidth: 100,
