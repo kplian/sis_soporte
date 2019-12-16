@@ -8,7 +8,7 @@
  * 	ISUE				FECHA				AUTHOR					DESCRIPCION	
  	#8					18/03/2019			EGS						Se  agrega y diferencia tipo y sub_tipo
  	#10 EndeEtr		  1/07/2019			    EGS					    se agrego campos extras a wf
- * 
+    #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  * */
 
 class MODHelpDesk extends MODbase{
@@ -196,6 +196,24 @@ class MODHelpDesk extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
+    function obtenerNumeroReferencial(){//#15
+        //Definicion de variables para ejecucion del procedimientp
+        $this->procedimiento='sopte.ft_help_desk_sel';
+        $this->transaccion='SOPTE_NUMREF_SEL';
+        $this->tipo_procedimiento='SEL';//tipo de transaccion
+
+        //Definicion de la lista del resultado del query
+
+        $this->setParametro('id_funcionario','id_funcionario','int4');
+
+        $this->captura('numero_ref','int4');
+        //Ejecuta la instruccion
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+
+        //Devuelve la respuesta
+        return $this->respuesta;
+    }
 	
 			
 }
