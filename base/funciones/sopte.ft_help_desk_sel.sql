@@ -24,6 +24,7 @@ $body$
  #5 EndeEtr           09/04/2019            EGS                 Se visualiza obs de Wf en estado resuelto y rechazado
  #7 EndeEtr           22/04/2019            EGS                 Se arregla filtros
  #14 EndeEtr          16/12/2019            EGS                 Se agrega el nuemro de interno del funcionario Solicitante
+ #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  ***************************************************************************/
 
 DECLARE
@@ -223,6 +224,51 @@ BEGIN
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
 
+            --Devuelve la respuesta
+            return v_consulta;
+
+        end;
+
+     /*********************************
+     #TRANSACCION:  'SOPTE_NUMREF_SEL'
+     #DESCRIPCION:    Consulta de datos de los numeros referencialesde los funcionarios
+     #AUTOR:        eddy.gutierrez
+     #FECHA:        16/12/2019
+     #ISSUE:        #15
+    ***********************************/
+
+    elseif(p_transaccion='SOPTE_NUMREF_SEL')then
+
+        begin
+            --Sentencia de la consulta
+            v_consulta:='select
+                        COALESCE(help.numero_ref,0) as numero_ref
+                        from sopte.thelp_desk help
+                        where  help.id_funcionario = '||v_parametros.id_funcionario||'
+                        order by help.fecha_reg DESC limit 1';
+            raise notice 'v_consulta %',v_consulta;
+            --Devuelve la respuesta
+            return v_consulta;
+
+        end;
+    /*********************************
+     #TRANSACCION:  'SOPTE_NUMREF_CONT'
+     #DESCRIPCION:    Conteo de registros
+     #AUTOR:        eddy.gutierrez
+     #FECHA:        16/12/2019
+     #ISSUE:        #15
+    ***********************************/
+
+    elsif(p_transaccion='SOPTE_NUMREF_CONT')then
+
+        begin
+
+            --Sentencia de la consulta de conteo de registros --#7
+            v_consulta:='select count(help.id_help_desk)
+                        from sopte.thelp_desk help
+                         where  help.id_funcionario = '||v_parametros.id_funcionario;
+
+            --Definicion de la respuesta
             --Devuelve la respuesta
             return v_consulta;
 
