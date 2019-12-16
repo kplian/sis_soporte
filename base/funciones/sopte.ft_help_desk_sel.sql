@@ -23,7 +23,7 @@ $body$
  #4 EndeEtr           08/04/2019            EGS                 Se agrego que los administradores de work flow de los deptos vean todos los tramites
  #5 EndeEtr           09/04/2019            EGS                 Se visualiza obs de Wf en estado resuelto y rechazado
  #7 EndeEtr           22/04/2019            EGS                 Se arregla filtros
-
+ #14 EndeEtr          16/12/2019            EGS                 Se agrega el nuemro de interno del funcionario Solicitante
  ***************************************************************************/
 
 DECLARE
@@ -131,7 +131,8 @@ BEGIN
                         help.id_tipo,
                         help.id_tipo_sub,
                         subti.nombre as nombre_subtipo,
-                        cat.descripcion as desc_prioridad
+                        cat.descripcion as desc_prioridad,
+                        help.numero_ref  --#14
                         from sopte.thelp_desk help
                         inner join segu.tusuario usu1 on usu1.id_usuario = help.id_usuario_reg
                         left join segu.tusuario usu2 on usu2.id_usuario = help.id_usuario_mod

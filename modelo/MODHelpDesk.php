@@ -56,7 +56,7 @@ class MODHelpDesk extends MODbase{
 		$this->captura('id_tipo_sub','int4');
 		$this->captura('nombre_subtipo','varchar');
 		$this->captura('desc_prioridad','varchar');
-		
+        $this->captura('numero_ref','integer');//#14
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -80,6 +80,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
 		$this->setParametro('descripcion','descripcion','varchar');
 		$this->setParametro('id_tipo','id_tipo','int4');
+        $this->setParametro('numero_ref','numero_ref','integer');//#14
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -105,7 +106,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
 		$this->setParametro('descripcion','descripcion','varchar');
 		$this->setParametro('id_tipo','id_tipo','int4');
-
+        $this->setParametro('numero_ref','numero_ref','integer');//#14
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
