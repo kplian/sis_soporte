@@ -165,7 +165,7 @@ BEGIN
     elsif(p_transaccion='SOPTE_HELP_CONT')then
 
         begin
-             v_depto = '';
+                v_depto = '';
                 v_cargo = 'no_adm';
                 FOR v_item in (SELECT
                       deptous.id_depto,
@@ -207,6 +207,7 @@ BEGIN
                  ELSE
                         sw_obs = ' ''--''::text';
                  END IF;
+
             --Sentencia de la consulta de conteo de registros --#7
             v_consulta:='select count(id_help_desk)
                         from sopte.thelp_desk help
@@ -219,7 +220,7 @@ BEGIN
                         left join sopte.ttipo tip on tip.id_tipo = help.id_tipo
                         left join sopte.ttipo subti on subti.id_tipo =help.id_tipo_sub
                         left join param.tcatalogo cat on cat.codigo = help.prioridad
-                        where '||v_filtro||'';
+                        where ';
 
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
@@ -242,7 +243,7 @@ BEGIN
         begin
             --Sentencia de la consulta
             v_consulta:='select
-                        COALESCE(help.numero_ref,0) as numero_ref
+                        help.numero_ref
                         from sopte.thelp_desk help
                         where  help.id_funcionario = '||v_parametros.id_funcionario||'
                         order by help.fecha_reg DESC limit 1';
