@@ -99,7 +99,7 @@ Phx.vista.HelpDesk = {
 					                    if (r.length > 0 ) {                        
 					                    	
 					                       this.Cmp.id_funcionario.setValue(r[0].data.id_funcionario);
-					                       this.obtenerNumeroReferencial(Phx.CP.config_ini.id_funcionario); //#15
+					                       this.obtenerNumeroReferencial(r[0].data.id_funcionario); //#15
 					                    }     
 					                                    
 					                }, scope : this

@@ -220,7 +220,7 @@ BEGIN
                         left join sopte.ttipo tip on tip.id_tipo = help.id_tipo
                         left join sopte.ttipo subti on subti.id_tipo =help.id_tipo_sub
                         left join param.tcatalogo cat on cat.codigo = help.prioridad
-                        where ';
+                        where '||v_filtro||'';
 
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
