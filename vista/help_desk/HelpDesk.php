@@ -11,6 +11,8 @@
  #6 EndeEtr           18/04/2019            EGS                 Funcionarios solo vigentes
  #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf
  #12 EndeEtr            09/10/2019          EGS                 e arrregla bug para paginacion
+ #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
+ #15 EndeEtr          17/12/2019            EGS                 Arreglo de bugs y mejora en la recarga automatica de Funcionario
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -97,11 +99,18 @@ Phx.vista.HelpDesk = {
 					                    if (r.length > 0 ) {                        
 					                    	
 					                       this.Cmp.id_funcionario.setValue(r[0].data.id_funcionario);
+					                       this.obtenerNumeroReferencial(r[0].data.id_funcionario); //#15
 					                    }     
 					                                    
 					                }, scope : this
-					            });                  
-       		  //this.Cmp.id_funcionario.disable();
+					            });
+             this.Cmp.id_funcionario.enable();//#15
+
+             this.Cmp.id_funcionario.on('select',function(combo,record,index){//#15
+
+                  this.obtenerNumeroReferencial( record.data.id_funcionario);
+
+             },this)
 
     },
    	onButtonEdit: function() {
@@ -157,6 +166,29 @@ Phx.vista.HelpDesk = {
         }
        return tb
     },
+    obtenerNumeroReferencial: function (id_funcionario) {
+            Phx.CP.loadingShow();
+            Ext.Ajax.request({
+                url:'../../sis_soporte/control/HelpDesk/obtenerNumeroReferencial',
+                params:{
+                    id_funcionario: id_funcionario,
+                },
+                success: function(resp){
+                    Phx.CP.loadingHide();
+                    var reg = Ext.util.JSON.decode(Ext.util.Format.trim(resp.responseText));
+                    if(reg.datos.length != 0 ){
+                        var numero_ref = reg.datos[0]['numero_ref'];
+                        this.Cmp.numero_ref.setValue(numero_ref);
+                    }
+                    else {
+                        this.Cmp.numero_ref.reset();
+                    }
+                },
+                failure: this.conexionFailure,
+                timeout: this.timeout,
+                scope:this
+            });
+    }
 	
 }
 </script>

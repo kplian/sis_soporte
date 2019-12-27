@@ -56,3 +56,10 @@ COMMENT ON COLUMN sopte.ttipo.nombre
 IS 'nombre del tipo';
 
 /***********************************F-SCP-EGS-SOPTE-0-27/02/2019**********************************************/
+/***********************************I-SCP-EGS-SOPTE-1-16/12/2019**********************************************/
+ALTER TABLE sopte.thelp_desk
+  ADD COLUMN numero_ref INTEGER;
+
+COMMENT ON COLUMN sopte.thelp_desk.numero_ref
+IS 'el numero interno del funcionario solicitante';
+/***********************************F-SCP-EGS-SOPTE-1-16/12/2019**********************************************/

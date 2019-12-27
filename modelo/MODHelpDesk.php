@@ -8,7 +8,7 @@
  * 	ISUE				FECHA				AUTHOR					DESCRIPCION	
  	#8					18/03/2019			EGS						Se  agrega y diferencia tipo y sub_tipo
  	#10 EndeEtr		  1/07/2019			    EGS					    se agrego campos extras a wf
- * 
+    #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  * */
 
 class MODHelpDesk extends MODbase{
@@ -56,7 +56,7 @@ class MODHelpDesk extends MODbase{
 		$this->captura('id_tipo_sub','int4');
 		$this->captura('nombre_subtipo','varchar');
 		$this->captura('desc_prioridad','varchar');
-		
+        $this->captura('numero_ref','integer');//#14
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -80,6 +80,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
 		$this->setParametro('descripcion','descripcion','varchar');
 		$this->setParametro('id_tipo','id_tipo','int4');
+        $this->setParametro('numero_ref','numero_ref','integer');//#14
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -105,7 +106,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
 		$this->setParametro('descripcion','descripcion','varchar');
 		$this->setParametro('id_tipo','id_tipo','int4');
-
+        $this->setParametro('numero_ref','numero_ref','integer');//#14
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -195,6 +196,24 @@ class MODHelpDesk extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
+    function obtenerNumeroReferencial(){//#15
+        //Definicion de variables para ejecucion del procedimientp
+        $this->procedimiento='sopte.ft_help_desk_sel';
+        $this->transaccion='SOPTE_NUMREF_SEL';
+        $this->tipo_procedimiento='SEL';//tipo de transaccion
+
+        //Definicion de la lista del resultado del query
+
+        $this->setParametro('id_funcionario','id_funcionario','int4');
+
+        $this->captura('numero_ref','int4');
+        //Ejecuta la instruccion
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+
+        //Devuelve la respuesta
+        return $this->respuesta;
+    }
 	
 			
 }

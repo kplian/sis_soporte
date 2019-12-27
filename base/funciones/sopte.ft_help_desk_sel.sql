@@ -23,7 +23,8 @@ $body$
  #4 EndeEtr           08/04/2019            EGS                 Se agrego que los administradores de work flow de los deptos vean todos los tramites
  #5 EndeEtr           09/04/2019            EGS                 Se visualiza obs de Wf en estado resuelto y rechazado
  #7 EndeEtr           22/04/2019            EGS                 Se arregla filtros
-
+ #14 EndeEtr          16/12/2019            EGS                 Se agrega el nuemro de interno del funcionario Solicitante
+ #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  ***************************************************************************/
 
 DECLARE
@@ -131,7 +132,8 @@ BEGIN
                         help.id_tipo,
                         help.id_tipo_sub,
                         subti.nombre as nombre_subtipo,
-                        cat.descripcion as desc_prioridad
+                        cat.descripcion as desc_prioridad,
+                        help.numero_ref  --#14
                         from sopte.thelp_desk help
                         inner join segu.tusuario usu1 on usu1.id_usuario = help.id_usuario_reg
                         left join segu.tusuario usu2 on usu2.id_usuario = help.id_usuario_mod
@@ -163,7 +165,7 @@ BEGIN
     elsif(p_transaccion='SOPTE_HELP_CONT')then
 
         begin
-             v_depto = '';
+                v_depto = '';
                 v_cargo = 'no_adm';
                 FOR v_item in (SELECT
                       deptous.id_depto,
@@ -205,6 +207,7 @@ BEGIN
                  ELSE
                         sw_obs = ' ''--''::text';
                  END IF;
+
             --Sentencia de la consulta de conteo de registros --#7
             v_consulta:='select count(id_help_desk)
                         from sopte.thelp_desk help
@@ -222,6 +225,51 @@ BEGIN
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
 
+            --Devuelve la respuesta
+            return v_consulta;
+
+        end;
+
+     /*********************************
+     #TRANSACCION:  'SOPTE_NUMREF_SEL'
+     #DESCRIPCION:    Consulta de datos de los numeros referencialesde los funcionarios
+     #AUTOR:        eddy.gutierrez
+     #FECHA:        16/12/2019
+     #ISSUE:        #15
+    ***********************************/
+
+    elseif(p_transaccion='SOPTE_NUMREF_SEL')then
+
+        begin
+            --Sentencia de la consulta
+            v_consulta:='select
+                        help.numero_ref
+                        from sopte.thelp_desk help
+                        where  help.id_funcionario = '||v_parametros.id_funcionario||'
+                        order by help.fecha_reg DESC limit 1';
+            raise notice 'v_consulta %',v_consulta;
+            --Devuelve la respuesta
+            return v_consulta;
+
+        end;
+    /*********************************
+     #TRANSACCION:  'SOPTE_NUMREF_CONT'
+     #DESCRIPCION:    Conteo de registros
+     #AUTOR:        eddy.gutierrez
+     #FECHA:        16/12/2019
+     #ISSUE:        #15
+    ***********************************/
+
+    elsif(p_transaccion='SOPTE_NUMREF_CONT')then
+
+        begin
+
+            --Sentencia de la consulta de conteo de registros --#7
+            v_consulta:='select count(help.id_help_desk)
+                        from sopte.thelp_desk help
+                         where  help.id_funcionario = '||v_parametros.id_funcionario;
+
+            --Definicion de la respuesta
             --Devuelve la respuesta
             return v_consulta;
 

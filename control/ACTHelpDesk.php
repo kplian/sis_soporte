@@ -9,7 +9,7 @@
  #ISSUE                FECHA                AUTOR                DESCRIPCION
  #4 EndeEtr           08/04/2019            EGS                 Se modifico los filtros para cada una de las ventas de help desk y asis    
  #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
-     
+ #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  */
 
 class ACTHelpDesk extends ACTbase{    
@@ -83,6 +83,14 @@ class ACTHelpDesk extends ACTbase{
 		$this->res=$this->objFunc->insertarAtributoAsignacion($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
+    function obtenerNumeroReferencial(){//#15
+        $this->objParam->defecto('ordenacion','id_help_desk');
+
+        $this->objFunc=$this->create('MODHelpDesk');
+        $this->res=$this->objFunc->obtenerNumeroReferencial($this->objParam);
+
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
 		
 			
 }

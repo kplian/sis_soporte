@@ -13,7 +13,8 @@ HISTORIAL DE MODIFICACIONES:
  #7 EndeEtr           18/04/2019            EGS                 correcciones en filtros
  #9 EndeEtr			  06/06/2019			EGS					Se aumento la hora del registro de la solicitud
  #10 EndeEtr		  1/07/2019			    EGS					se agrego campos extras a wf
- #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf  
+ #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf
+ #14 EndeEtr          16/12/2019            EGS                 Se agrega el Numero referencial del funcionario solicitante
  * */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -426,6 +427,22 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				grid:true,
 				form:true
 		},
+        {//#14
+            config:{
+                name: 'numero_ref',
+                fieldLabel: 'Número Referencial',//#14
+                allowBlank: true,
+                anchor: '80%',
+                gwidth: 100,
+                maxLength:8,
+                qtip:'Numero Referencial (interno , celular ) del funcionario solicitante',
+            },
+            type:'NumberField',
+            filters:{pfiltro:'help.numero_ref',type:'string'},
+            id_grupo:1,
+            grid:true,
+            form:true
+        },
 
 		{
 			config:{
@@ -619,6 +636,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 		{name:'nombre_subtipo', type: 'string'},
 		{name:'id_tipo_sub', type: 'numeric'},
 		{name:'prioridad', type: 'string'},
+        {name:'numero_ref', type: 'numeric'},//#14
+
 
 	],
 	sortInfo:{

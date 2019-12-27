@@ -24,6 +24,7 @@ $body$
  #8             23/04/2019              EGS EndeEtr             actualizacion en correos cuando funcionario superior es null inmediato superior y nivel uo 5 se toma como funcionario base
  #9 EndeETR     06/06/2019              EGS                     Se agrego que las alarmas inserte el proceso_wf y el estado_wf         
  #10 EndeEtr    1/07/2019			    EGS					    se agrego campos extras a wf
+ #14 EndeEtr          16/12/2019            EGS                 Se agrega el numero de interno del funcionario Solicitante
 
  ***************************************************************************/
 
@@ -101,6 +102,7 @@ DECLARE
     v_record_id_funcionario_gaf     integer;--#7  
     v_fecha_now                     date;--#7 
     v_id_funcionario_array          integer;
+    v_numero_ref                integer; --#14
 
     
 BEGIN
@@ -187,7 +189,8 @@ BEGIN
             fecha_mod,
             estado,
             descripcion,
-            id_tipo
+            id_tipo,
+            numero_ref --#14
               ) values(
             v_parametros.id_funcionario,
             v_id_proceso_wf,
@@ -203,7 +206,8 @@ BEGIN
             null,
             v_codigo_estado,
             v_parametros.descripcion,
-            v_parametros.id_tipo
+            v_parametros.id_tipo,
+            v_parametros.numero_ref --#14
 
             )RETURNING id_help_desk into v_id_help_desk;
             
@@ -238,7 +242,8 @@ BEGIN
             id_usuario_ai = v_parametros._id_usuario_ai,
             usuario_ai = v_parametros._nombre_usuario_ai,
             descripcion = v_parametros.descripcion,
-            id_tipo = v_parametros.id_tipo    
+            id_tipo = v_parametros.id_tipo,
+            numero_ref = v_parametros.numero_ref --#14
             where id_help_desk=v_parametros.id_help_desk;
                
             --Definicion de la respuesta
@@ -296,7 +301,8 @@ BEGIN
                   c.nro_tramite,
                   c.fecha,
                   c.id_funcionario,
-                  c.descripcion
+                  c.descripcion,
+                  c.numero_ref --#14
                   into
                   v_id_proceso_wf,
                   v_id_estado_wf,
@@ -306,7 +312,8 @@ BEGIN
                   v_nro_tramite, --#5
                   v_fecha,
                   v_id_funcionario,
-                  v_descripcion_sol
+                  v_descripcion_sol,
+                  v_numero_ref --#14
                   from sopte.thelp_desk c
                   inner join wf.testado_wf ew on ew.id_estado_wf = c.id_estado_wf  
                   where c.id_help_desk = v_parametros.id_help_desk;
@@ -578,7 +585,8 @@ BEGIN
                                     END IF;                        
                                 ELSIF v_codigo_estado_siguiente = 'pendiente' THEN--#7 
                                        --raise exception 'ds %', v_desc_funcionario;
-                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">Solicitud Soporte</font> </font><br>Estado Actual :<b>'||v_codigo_estado_siguiente||'</b><br><b></b>El motivo de la presente es Solicitar el soporte con el número de trámite : <b>'||v_nro_tramite||'</b>.<br><br><b>Detalle :</b><br>'||lower(v_descripcion_sol)||'.<br><br> Agradecerles que lo revisen por Favor.<br> Atte. '||v_desc_funcionario||'<br>Saludos<br>Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
+                                       --#14 se agrega numero de interno al correo
+                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">Solicitud Soporte</font> </font><br>Estado Actual :<b>'||v_codigo_estado_siguiente||'</b><br><b></b>El motivo de la presente es Solicitar el soporte con el número de trámite : <b>'||v_nro_tramite||'</b>.<br><br><b>Detalle :</b><br>'||lower(v_descripcion_sol)||'.<br><br> Agradecerles que lo revisen por Favor.<br> Atte. '||v_desc_funcionario||'<br>Saludos. <br>Numero referencial: '||v_numero_ref||'<br> Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
                                       v_titulo = 'Solicitud de Soporte: '||v_nro_tramite;
                                      IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
                                           UPDATE temporal SET
