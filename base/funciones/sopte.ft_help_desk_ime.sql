@@ -304,7 +304,7 @@ BEGIN
                   c.fecha,
                   c.id_funcionario,
                   c.descripcion,
-                  c.numero_ref --#14
+                  COALESCE(c.numero_ref,0) as numero_ref --#14
                   into
                   v_id_proceso_wf,
                   v_id_estado_wf,
@@ -588,7 +588,7 @@ BEGIN
                                 ELSIF v_codigo_estado_siguiente = 'pendiente' THEN--#7
                                        --raise exception 'ds %', v_desc_funcionario;
                                        --#14 se agrega numero de interno al correo
-                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">Solicitud Soporte</font> </font><br>Estado Actual :<b>'||v_codigo_estado_siguiente||'</b><br><b></b>El motivo de la presente es Solicitar el soporte con el número de trámite : <b>'||v_nro_tramite||'</b>.<br><br><b>Detalle :</b><br>'||lower(v_descripcion_sol)||'.<br><br> Agradecerles que lo revisen por Favor.<br> Atte. '||v_desc_funcionario||'<br>Saludos. <br>Numero referencial: '||COALESCE(v_numero_ref,' ')||'<br> Nota: Se Adjunta copia a '||v_desc_funcionario_encar;   --#16
+                                      v_descripcion_correo='<font color="99CC00" size="5"><font size="4">Solicitud Soporte</font> </font><br>Estado Actual :<b>'||v_codigo_estado_siguiente||'</b><br><b></b>El motivo de la presente es Solicitar el soporte con el número de trámite : <b>'||v_nro_tramite||'</b>.<br><br><b>Detalle :</b><br>'||lower(v_descripcion_sol)||'.<br><br> Agradecerles que lo revisen por Favor.<br> Atte. '||v_desc_funcionario||'<br>Saludos. <br>Numero referencial: '||v_numero_ref||'<br> Nota: Se Adjunta copia a '||v_desc_funcionario_encar;
                                       v_titulo = 'Solicitud de Soporte: '||v_nro_tramite;
                                      IF vuo_id_funcionario[1] <> v_record_id_funcionario_gg THEN
                                           UPDATE temporal SET
