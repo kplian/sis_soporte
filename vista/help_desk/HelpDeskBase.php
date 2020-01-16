@@ -713,7 +713,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                    fields: ['id_tipo','codigo','nombre','descripcion'],
 			                    // turn on remote sorting
 			                    remoteSort: true,
-			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' }
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' ,estado_reg:'activo'}//#17
 			                }),
 			                               
 			                valueField: 'id_tipo',
@@ -763,7 +763,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                    fields: ['id_tipo','codigo','nombre','descripcion'],
 			                    // turn on remote sorting
 			                    remoteSort: true,
-			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'no' }
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'no',estado_reg:'activo' }//#17
 			                }),
 			                               
 			                valueField: 'id_tipo',
