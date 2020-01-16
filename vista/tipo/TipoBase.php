@@ -5,6 +5,8 @@
 *@author  (eddy.gutierrez)
 *@date 28-02-2019 16:38:04
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ ISSUE       FECHA       AUTHOR          DESCRIPCION
+ #17         15/01/2020  EGS             se agrega colores a los campos para diferenciar entre activo e inactivo
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -53,7 +55,14 @@ Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: false,
 				anchor: '80%',
 				gwidth: 100,
-				maxLength:200
+				maxLength:200,
+                renderer : function(value,metaData, record,rowIndex, colIndex, store) {//#17
+                   if (record.data['estado_reg'] == 'activo') {
+                        return String.format('<b><font size=3 style="color:#008000";>{0}</font><b>', record.data['nombre']);
+                    } else {
+                        return String.format('<b><font size=3 style="color:#FF0000";>{0}</font><b>', record.data['nombre']);
+                    }
+                }
 			},
 				type:'TextField',
 				filters:{pfiltro:'tipsop.codigo',type:'string'},
@@ -110,7 +119,14 @@ Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-				maxLength:10
+				maxLength:10,
+                renderer : function(value,metaData, record,rowIndex, colIndex, store) {//#17
+                    if (record.data['estado_reg'] == 'activo') {
+                        return String.format('<b><font size=3 style="color:#008000";>{0}</font><b>', record.data['estado_reg']);
+                    } else {
+                        return String.format('<b><font size=3 style="color:#FF0000";>{0}</font><b>', record.data['estado_reg']);
+                    }
+                }
 			},
 				type:'TextField',
 				filters:{pfiltro:'tipsop.estado_reg',type:'string'},
