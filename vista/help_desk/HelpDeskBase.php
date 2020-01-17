@@ -794,6 +794,29 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			    
 			    this.eventosExtra = function(obj){//#10
 				   console.log('obj',obj)
+
+                    Phx.CP.loadingShow();
+                    Ext.Ajax.request({
+                        url:'../../sis_soporte/control/Tipo/listarTipo',
+                        params:{
+                            id_tipo:obj.data.id_tipo,
+                            estado_reg: 'activo'
+                        },
+                        success: function(resp){
+                            Phx.CP.loadingHide();
+                            var reg = Ext.util.JSON.decode(Ext.util.Format.trim(resp.responseText))
+
+                            if(reg.datos == 0){
+                                obj.data.id_tipo = null;
+                                console.log('obj.data.id_tipo',obj.data.id_tipo);
+                                alert('No esta activo este Tipo Escoja otro');
+                            }
+
+                        },
+                        failure: this.conexionFailure,
+                        timeout: this.timeout,
+                        scope:this
+                    });
 				   
 				    obj.Cmp.prioridad.store.baseParams.query = obj.data.prioridad;
 					obj.Cmp.prioridad.store.load({params:{start:0,limit:50}, 
