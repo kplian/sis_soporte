@@ -347,6 +347,13 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                 minChars:1,
                 renderer : function(value, p, record) {
                     return String.format('{0}', record.data['nombre_tipo']);
+                },
+                listeners: {
+                    'afterrender': function(combo){
+                    },
+                    'expand':function (combo) {
+                        this.store.reload();
+                    }
                 }
             },
             type:'ComboBox',
@@ -731,7 +738,14 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                minChars:1,
 			                renderer : function(value, p, record) {
 			                    return String.format('{0}', record.data['nombre_tipo']);
-			                }
+			                },
+                            listeners: {
+                                'afterrender': function(combo){
+                                },
+                                'expand':function (combo) {
+                                    this.store.reload();
+                                }
+                            }
 			            },
 			            type:'ComboBox',
 			            id_grupo:1,
