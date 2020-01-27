@@ -32,6 +32,8 @@ DECLARE
 	v_mensaje_error         text;
 	v_id_tipo	            integer;
 	v_codigo                varchar;
+    v_id_tipo_fk            integer = NULL;
+    v_estado_reg            varchar;
 BEGIN
 
     v_nombre_funcion = 'sopte.ft_tipo_ime';
@@ -91,6 +93,13 @@ BEGIN
 
 
 			)RETURNING id_tipo into v_id_tipo;
+
+            --activa un tipo si el subtipo es insertado
+            IF v_parametros.id_tipo_fk is not NULL THEN
+                UPDATE sopte.ttipo SET
+                    estado_reg = 'activo'
+                WHERE id_tipo = v_parametros.id_tipo_fk;
+            END IF;
 
 			--Definicion de la respuesta
 			v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Tipo Soporte almacenado(a) con exito (id_tipo'||v_id_tipo||')');
@@ -165,6 +174,22 @@ BEGIN
 	elsif(p_transaccion='SOPTE_ACTI_MOD')then
 
 		begin
+            SELECT
+                t.id_tipo_fk,
+                t.estado_reg
+            into
+                v_id_tipo_fk,
+                v_estado_reg
+            FROM sopte.ttipo t
+            WHERE t.id_tipo = v_parametros.id_tipo;
+
+
+            IF v_id_tipo_fk is not null and v_estado_reg = 'inactivo'  THEN
+                UPDATE sopte.ttipo SET
+                    estado_reg = 'activo'
+                WHERE id_tipo = v_id_tipo_fk;
+            END IF;
+
 			--Sentencia de la eliminacion
 			UPDATE sopte.ttipo SET
                 estado_reg = v_parametros.estado_reg

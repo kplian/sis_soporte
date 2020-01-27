@@ -37,7 +37,7 @@ Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
             iconCls: 'bunchecked',
             disabled: false,
             handler: function () {
-                this.activaInactivarTipo('Inactivo')
+                this.activaInactivarTipo('inactivo')
             },
             tooltip: '<b>Inactivar</b>'
         });
@@ -309,7 +309,13 @@ Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
     //
     successSaveOperacion: function () { //#17
         Phx.CP.loadingHide();
+        Phx.CP.getPagina(this.idContenedorPadre).reload();
         Ext.MessageBox.alert('EXITO!!!', 'Se realizo con exito la operación.');
+    },
+    successSave: function () {//#17
+        Phx.CP.loadingHide();
+        Phx.CP.getPagina(this.idContenedorPadre).reload();
+        this.window.hide();
     },
 	}
 )
