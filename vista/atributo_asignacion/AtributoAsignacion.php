@@ -146,7 +146,7 @@ Phx.vista.AtributoAsignacion=Ext.extend(Phx.frmInterfaz,{
                     fields: ['id_tipo','codigo','nombre','descripcion'],
                     // turn on remote sorting
                     remoteSort: true,
-                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' }
+                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si',estado_reg :'activo' }//#17
                 }),
                // tpl:'<tpl for=".">\
                  //              <div class="x-combo-list-item"><p><b>ID Comprobante:</b>{nombre},<b>Nro Tramite: </b>{nro_tramite}</p>\
@@ -167,6 +167,13 @@ Phx.vista.AtributoAsignacion=Ext.extend(Phx.frmInterfaz,{
                 minChars:1,
                 renderer : function(value, p, record) {
                     return String.format('{0}', record.data['nombre_tipo']);
+                },
+                listeners: {
+                    'afterrender': function(combo){
+                    },
+                    'expand':function (combo) {
+                        this.store.reload();
+                    }
                 }
             },
             type:'ComboBox',
@@ -199,7 +206,7 @@ Phx.vista.AtributoAsignacion=Ext.extend(Phx.frmInterfaz,{
                     fields: ['id_tipo','codigo','nombre','descripcion','id_tipo_fk'],
                     // turn on remote sorting
                     remoteSort: true,
-                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre#tipsop.id_tipo_fk',tipo:'no' }
+                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre#tipsop.id_tipo_fk',tipo:'no',estado_reg : 'activo'}//#17
                 }),
                // tpl:'<tpl for=".">\
                  //              <div class="x-combo-list-item"><p><b>ID Comprobante:</b>{nombre},<b>Nro Tramite: </b>{nro_tramite}</p>\

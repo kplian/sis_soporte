@@ -15,6 +15,7 @@ HISTORIAL DE MODIFICACIONES:
  #10 EndeEtr		  1/07/2019			    EGS					se agrego campos extras a wf
  #11 EndeEtr		  08/07/2019			EGS					Se agregan la obs del wf
  #14 EndeEtr          16/12/2019            EGS                 Se agrega el Numero referencial del funcionario solicitante
+ #17 EndeEtr          16/01/2022            EGS                 el Id tipo filtra solo los activos
  * */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -202,7 +203,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
   
    
                          				
-				if(record.json.nombreVista == 'HelpDesk' ){
+				if(record.json.nombreVista == 'HelpDesk'  || record.json.nombreVista == 'HelpDeskRep'  ){
 						return '<tpl for="."><div class="x-combo-list-item"><p><font><b>Nro Tramite: </b>'+record.data['nro_tramite']+'</font></p><p><b>Estado: <font  size=3 ></b> '+record.data['estado'] +'</font></p></div></tpl>';
 				}
 				if(record.json.nombreVista == 'HelpDeskAsis' ){
@@ -325,7 +326,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                     fields: ['id_tipo','codigo','nombre','descripcion'],
                     // turn on remote sorting
                     remoteSort: true,
-                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' }
+                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si',estado_reg:'activo' }//#17
                 }),
                // tpl:'<tpl for=".">\
                  //              <div class="x-combo-list-item"><p><b>ID Comprobante:</b>{nombre},<b>Nro Tramite: </b>{nro_tramite}</p>\
@@ -346,6 +347,13 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
                 minChars:1,
                 renderer : function(value, p, record) {
                     return String.format('{0}', record.data['nombre_tipo']);
+                },
+                listeners: {
+                    'afterrender': function(combo){
+                    },
+                    'expand':function (combo) {
+                        this.store.reload();
+                    }
                 }
             },
             type:'ComboBox',
@@ -712,7 +720,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                    fields: ['id_tipo','codigo','nombre','descripcion'],
 			                    // turn on remote sorting
 			                    remoteSort: true,
-			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' }
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'si' ,estado_reg:'activo'}//#17
 			                }),
 			                               
 			                valueField: 'id_tipo',
@@ -730,7 +738,14 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                minChars:1,
 			                renderer : function(value, p, record) {
 			                    return String.format('{0}', record.data['nombre_tipo']);
-			                }
+			                },
+                            listeners: {
+                                'afterrender': function(combo){
+                                },
+                                'expand':function (combo) {
+                                    this.store.reload();
+                                }
+                            }
 			            },
 			            type:'ComboBox',
 			            id_grupo:1,
@@ -762,7 +777,7 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			                    fields: ['id_tipo','codigo','nombre','descripcion'],
 			                    // turn on remote sorting
 			                    remoteSort: true,
-			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'no' }
+			                    baseParams:{par_filtro:'tipsop.id_tipo#tipsop.codigo#tipsop.nombre',tipo:'no',estado_reg:'activo' }//#17
 			                }),
 			                               
 			                valueField: 'id_tipo',
@@ -793,6 +808,29 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 			    
 			    this.eventosExtra = function(obj){//#10
 				   console.log('obj',obj)
+
+                    Phx.CP.loadingShow();
+                    Ext.Ajax.request({
+                        url:'../../sis_soporte/control/Tipo/listarTipo',
+                        params:{
+                            id_tipo:obj.data.id_tipo,
+                            estado_reg: 'activo'
+                        },
+                        success: function(resp){
+                            Phx.CP.loadingHide();
+                            var reg = Ext.util.JSON.decode(Ext.util.Format.trim(resp.responseText))
+
+                            if(reg.datos == 0){
+                                obj.data.id_tipo = null;
+                                console.log('obj.data.id_tipo',obj.data.id_tipo);
+                                alert('No esta activo este Tipo Escoja otro');
+                            }
+
+                        },
+                        failure: this.conexionFailure,
+                        timeout: this.timeout,
+                        scope:this
+                    });
 				   
 				    obj.Cmp.prioridad.store.baseParams.query = obj.data.prioridad;
 					obj.Cmp.prioridad.store.load({params:{start:0,limit:50}, 

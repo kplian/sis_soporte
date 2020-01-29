@@ -5,6 +5,8 @@
 *@author  (eddy.gutierrez)
 *@date 28-02-2019 16:38:04
 *@description Clase que envia los parametros requeridos a la Base de datos para la ejecucion de las funciones, y que recibe la respuesta del resultado de la ejecucion de las mismas
+ * ISSUE       FECHA        AUTHOR          DESCRIPCION
+    #17         15/01/2020  EGS             Se activa o inactiva un tipo de soporte
 */
 
 class MODTipo extends MODbase{
@@ -102,6 +104,23 @@ class MODTipo extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
+    function activarInactivarTipo(){//#17
+        //Definicion de variables para ejecucion del procedimiento
+        $this->procedimiento='sopte.ft_tipo_ime';
+        $this->transaccion='SOPTE_ACTI_MOD';
+        $this->tipo_procedimiento='IME';
+
+        //Define los parametros para la funcion
+        $this->setParametro('id_tipo','id_tipo','int4');
+        $this->setParametro('estado_reg','estado_reg','varchar');
+
+        //Ejecuta la instruccion
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+
+        //Devuelve la respuesta
+        return $this->respuesta;
+    }
 			
 }
 ?>

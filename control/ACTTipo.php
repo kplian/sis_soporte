@@ -8,7 +8,7 @@
 	ISUE				FECHA				AUTHOR					DESCRIPCION	
  	#8					18/03/2019			EGS						Se agrega el poder de editar el tipo y recarga los subtipos correspondientes
  *  #10 EndeEtr		  1/07/2019			    EGS					    se agrego parametros para combo
- * 
+ *  #17                 15/01/2020          EGS                     se agrega filtro para estado reg
 */
 
 class ACTTipo extends ACTbase{    
@@ -34,7 +34,10 @@ class ACTTipo extends ACTbase{
 			$this->objParam->addFiltro("tipsop.id_tipo_fk = ". $this->objParam->getParametro('id_tipo_fk')." ");
 					
 		};	//#8
-		
+        if($this->objParam->getParametro('estado_reg')!='' ){//#17
+            $this->objParam->addFiltro("tipsop.estado_reg = ''". $this->objParam->getParametro('estado_reg')."'' ");
+
+        };
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
 			$this->res = $this->objReporte->generarReporteListado('MODTipo','listarTipo');
@@ -61,6 +64,11 @@ class ACTTipo extends ACTbase{
 		$this->res=$this->objFunc->eliminarTipo($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
+    function activarInactivarTipo(){
+        $this->objFunc=$this->create('MODTipo');
+        $this->res=$this->objFunc->activarInactivarTipo($this->objParam);
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
 			
 }
 
