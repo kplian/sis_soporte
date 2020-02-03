@@ -101,7 +101,7 @@ BEGIN
             END IF;
 
             --#5 cambio que al ser estado rechazdo o resuelto el solicitante vea sus descripcion de
-            --#18 Se agregan los with para obtener los funcionarios qu resolvieron los soportes segun wf y situacion
+            --#18 Se agregan los with para obtener los funcionarios qu resolvieron los soportes segun wf y situacion del soporte
             --Sentencia de la consulta
             v_consulta:='
                     WITH fun_asig (
