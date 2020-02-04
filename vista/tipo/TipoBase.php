@@ -13,7 +13,7 @@ header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
 Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
-
+    nombreVista:'TipoBase',
 	constructor:function(config){
 		this.maestro=config.maestro;
     	//llama al constructor de la clase padre
@@ -314,8 +314,11 @@ Phx.vista.TipoBase=Ext.extend(Phx.gridInterfaz,{
     },
     successSave: function () {//#17
         Phx.CP.loadingHide();
-        Phx.CP.getPagina(this.idContenedorPadre).reload();
+        if(this.nombreVista == 'SubTipo'){
+            Phx.CP.getPagina(this.idContenedorPadre).reload();
+        }
         this.window.hide();
+        this.reload();
     },
 	}
 )
