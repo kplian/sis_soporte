@@ -63,3 +63,12 @@ ALTER TABLE sopte.thelp_desk
 COMMENT ON COLUMN sopte.thelp_desk.numero_ref
 IS 'el numero interno del funcionario solicitante';
 /***********************************F-SCP-EGS-SOPTE-1-16/12/2019**********************************************/
+/***********************************I-SCP-VAN-SOPTE-1-07/04/2020**********************************************/
+alter table sopte.thelp_desk
+	add numero_correo int;
+
+comment on column sopte.thelp_desk.numero_correo is 'Número referencial al correo importado';
+
+create unique index thelp_desk_numero_correo_uindex
+	on sopte.thelp_desk (numero_correo);
+/***********************************F-SCP-EGS-SOPTE-1-07/04/2020**********************************************/

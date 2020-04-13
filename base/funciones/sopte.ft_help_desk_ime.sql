@@ -192,7 +192,8 @@ BEGIN
             estado,
             descripcion,
             id_tipo,
-            numero_ref --#14
+            numero_ref, --#14
+            numero_correo
               ) values(
             v_parametros.id_funcionario,
             v_id_proceso_wf,
@@ -209,8 +210,8 @@ BEGIN
             v_codigo_estado,
             v_parametros.descripcion,
             v_parametros.id_tipo,
-            v_parametros.numero_ref --#14
-
+            v_parametros.numero_ref, --#14
+            v_parametros.numero_correo
             )RETURNING id_help_desk into v_id_help_desk;
 
             --Definicion de la respuesta

@@ -81,6 +81,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('descripcion','descripcion','varchar');
 		$this->setParametro('id_tipo','id_tipo','int4');
         $this->setParametro('numero_ref','numero_ref','integer');//#14
+        $this->setParametro('numero_correo', 'numero_correo', 'int4');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -214,7 +215,65 @@ class MODHelpDesk extends MODbase{
         //Devuelve la respuesta
         return $this->respuesta;
     }
-	
-			
+
+    function obtenerFuncionario()
+    {
+        $this->procedimiento = 'orga.ft_funcionario_sel';
+        $this->transaccion = 'RH_FUNCIOCAR_SEL';
+        $this->tipo_procedimiento = 'SEL';
+        $this->setCount(false);
+        $this->setParametro('estado_reg_fun', 'estado_reg_fun', 'varchar');
+        $this->setParametro('estado_reg_asi', 'estado_reg_asi', 'varchar');
+
+        $this->captura('id_uo_funcionario', 'integer');
+        $this->captura('id_funcionario', 'integer');
+        $this->captura('desc_funcionario1', 'text');
+        $this->captura('desc_funcionario2', 'text');
+        $this->captura('id_uo', 'integer');
+        $this->captura('nombre_cargo', 'varchar');
+        $this->captura('fecha_asignacion', 'date');
+        $this->captura('fecha_finalizacion', 'date');
+        $this->captura('num_doc', 'integer');
+        $this->captura('ci', 'varchar');
+        $this->captura('codigo', 'varchar');
+        $this->captura('email_empresa', 'varchar');
+        $this->captura('estado_reg_fun', 'varchar');
+        $this->captura('estado_reg_asi', 'varchar');
+
+        $this->captura('id_cargo', 'integer');
+        $this->captura('descripcion_cargo', 'varchar');
+        $this->captura('cargo_codigo', 'varchar');
+
+        $this->captura('id_lugar', 'integer');
+        $this->captura('id_oficina', 'integer');
+        $this->captura('lugar_nombre', 'varchar');
+        $this->captura('oficina_nombre', 'varchar');
+
+        $this->setParametro('antiguedad_anterior', 'antiguedad_anterior', 'varchar');
+        //Ejecuta la funcion
+        $this->armarConsulta();
+        //echo $this->consulta;exit;
+        $this->ejecutarConsulta();
+        return $this->respuesta;
+    }
+
+    function obtenerDatosWFHelpDesk()
+    {
+        $this->procedimiento = 'sopte.f_obtener_help_desk_wf';
+        $this->transaccion = 'SOPTE_OBWF_SEL';
+        $this->tipo_procedimiento = 'SEL';
+        $this->setCount(false);
+        $this->setParametro('id_help_desk', 'id_help_desk', 'int4');
+
+        $this->captura('id_help_desk', 'int4');
+        $this->captura('id_proceso_wf', 'int4');
+        $this->captura('id_estado_wf', 'int4');
+        $this->captura('id_depto_wf', 'integer');
+        $this->captura('id_tipo_estado', 'integer');
+
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+        return $this->respuesta;
+    }
 }
 ?>
