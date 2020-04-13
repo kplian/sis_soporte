@@ -50,6 +50,7 @@ class ACTHelpDesk extends ACTbase{
 	}
 				
 	function insertarHelpDesk(){
+        $this->objParam->addParametro('numero_correo', 'NULL');
 		$this->objFunc=$this->create('MODHelpDesk');	
 		if($this->objParam->insertar('id_help_desk')){
 			$this->res=$this->objFunc->insertarHelpDesk($this->objParam);			
