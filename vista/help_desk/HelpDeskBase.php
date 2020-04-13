@@ -195,8 +195,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				renderer:function(value,metaData, record,rowIndex, colIndex, store){
 				//console.log('record....', value, metaData, record,'-->',rowIndex,'<---',colIndex,'<xxxxx>',store);
 				
-				 var prioridad = store.data.prioridad; 
-				 	 prioridad = prioridad.split(",");  
+				 var prioridad = store.data.prioridad;
+                    prioridad = Boolean(prioridad) ? prioridad.split(",") : [];
                  var fecha = '"'+record.data['fecha_reg']+'"';
                      fecha = Ext.util.Format.date(fecha,'d/m/Y'); 
                  var hms = Ext.util.Format.date(record.data['fecha_reg'],'H:i:s'); 
@@ -278,8 +278,8 @@ Phx.vista.HelpDeskBase=Ext.extend(Phx.gridInterfaz,{
 				gwidth: 100,
 				maxLength:-5,
 				renderer : function(value,metaData, record,rowIndex, colIndex, store) {
-				   	 var prioridad = store.data.prioridad; 
-				 	 prioridad = prioridad.split(",") ; 
+				   	 var prioridad = store.data.prioridad;
+                    prioridad = Boolean(prioridad) ? prioridad.split(",") : [];
                         
                    if (record.data['desc_prioridad']==prioridad[0]){
                    	return String.format('<b><font size=3 style="color:#008000";>{0}</font><b>', record.data['desc_prioridad']);												

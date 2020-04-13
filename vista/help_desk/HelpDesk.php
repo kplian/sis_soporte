@@ -59,6 +59,15 @@ Phx.vista.HelpDesk = {
 						handler: this.sigEstado, 
 						tooltip: '<b>Pasar al Siguiente Estado</b>'
 						});
+        this.addButton('importar_correos',
+            {
+                text: 'Importar Correos',
+                grupo: [0, 2],
+                iconCls: 'bdocuments',
+                disabled: false,
+                handler: this.importar,
+                tooltip: '<b>Importar correos</b>'
+            });
 		
 		
 	},
@@ -188,6 +197,21 @@ Phx.vista.HelpDesk = {
                 timeout: this.timeout,
                 scope:this
             });
+    },
+    importar: function () {
+        var self = this;
+        Phx.CP.loadingShow();
+        Ext.Ajax.request({
+            url: '../../sis_soporte/control/HelpDesk/importar_correos',
+            params: {fecha: ''},
+            success: function (resp) {
+                Phx.CP.loadingHide();
+                self.reload();
+            },
+            failure: this.conexionFailure,
+            timeout: this.timeout,
+            scope: this
+        });
     }
 	
 }

@@ -11,7 +11,7 @@
  #5 EndeEtr           09/04/2019            EGS                 Ordenacion DESC  
  #15 EndeEtr          16/12/2019            EGS                 recarga de numero referencial automatico del funcionario
  */
-
+require_once dirname(__DIR__).'/environment.php';
 class ACTHelpDesk extends ACTbase{    
 			
 	function listarHelpDesk(){
@@ -91,8 +91,104 @@ class ACTHelpDesk extends ACTbase{
 
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
-		
-			
+
+    function importar_correos()
+    {
+        $hostname = HOSTNAME;
+        $username = USERNAME;
+        $password = PASSWORD;
+
+        $inbox = imap_open($hostname, $username, $password) or die('Cannot connect to : correo.endetransmision.bo, ' . imap_last_error());
+        $emails = imap_search($inbox, 'UNSEEN');
+        if ($emails) {
+            $importados = 0;
+            $cantidad_correos = count($emails);
+            rsort($emails);
+            foreach ($emails as $email_number) {
+                $header = imap_headerinfo($inbox, $email_number);
+                $overview = imap_fetch_overview($inbox, $email_number, 0);
+                $message = imap_fetchbody($inbox, $email_number, "1.1", FT_PEEK);
+
+                if ($message == "") {
+                    $message = imap_fetchbody($inbox, $email_number, "1", FT_PEEK);
+                }
+                $message = quoted_printable_decode($message);
+
+                $date = new DateTime($overview[0]->date);
+                $id_funcionario = '665';
+
+                if (isset($header->from[0]->personal)) {
+                    $personal = $header->from[0]->personal;
+                } else {
+                    $personal = $header->from[0]->mailbox;
+                }
+
+                $rs = $this->obtenerFuncionario($personal);
+
+                if ($rs->getTipo() == 'EXITO') {
+                    $datos = $rs->getDatos();
+                    $id_funcionario = $datos[0]['id_funcionario'];
+
+                    $this->objParam->addParametro('id_funcionario', $id_funcionario);
+                    $this->objParam->addParametro('id_estado_wf', 'NULL');
+                    $this->objParam->addParametro('fecha', $date->format("Y-m-d"));
+                    $this->objParam->addParametro('estado_reg', 'activo');
+                    $this->objParam->addParametro('descripcion', htmlentities($message));
+                    $this->objParam->addParametro('id_tipo', '2');
+                    $this->objParam->addParametro('numero_ref', 'NULL');
+                    $this->objParam->addParametro('numero_correo', $email_number);
+                    $this->objFunc = $this->create('MODHelpDesk');
+                    $rs1 = $this->objFunc->insertarHelpDesk($this->objParam);
+                    if ($rs1->getTipo() == 'EXITO') {
+                        $datos = $rs1->getDatos();
+                        $this->objParam->addParametro('id_help_desk', $datos['id_help_desk']);
+                        $rs2 = $this->obtenerDatosWfHelpDesk();
+                        if ($rs2->getTipo() == 'EXITO') {
+                            $datos = $rs2->getDatos();
+                            $this->objParam->addParametro('id_proceso_wf_act', $datos[0]['id_proceso_wf']);
+                            $this->objParam->addParametro('id_estado_wf_act', $datos[0]['id_estado_wf']);
+                            $this->objParam->addParametro('id_depto_wf', $datos[0]['id_depto_wf']);
+                            $this->objParam->addParametro('id_tipo_estado', $datos[0]['id_tipo_estado']);
+                            $this->objParam->addParametro('id_funcionario_wf', 'NULL');
+                            $this->objParam->addParametro('json_procesos', '[]');
+                            $this->objFunc1 = $this->create('MODHelpDesk');
+                            $rs3 = $this->objFunc1->siguienteEstado($this->objParam);
+                        }
+                        $importados++;
+                    }
+                }
+            }
+        }
+        if ($cantidad_correos == $importados) {
+            $mensajeExito = new Mensaje();
+            $mensajeExito->setMensaje('EXITO', 'ACTHelpDesk.php', 'Correos Importados Verifique su información', 'Se importaron ' . $cantidad_correos . ' correos!', '', '', '', '');
+            $this->res = $mensajeExito;
+            $this->res->imprimirRespuesta($this->res->generarJson());
+        } else {
+            $mensajeExito = new Mensaje();
+            $mensajeExito->setMensaje('ERROR', 'ACTHelpDesk.php', 'Verifique su información', 'Un fallo insperado ocurrió al importar correos!', '', '', '', '');
+            $this->res = $mensajeExito;
+            $this->res->imprimirRespuesta($this->res->generarJson());
+        }
+    }
+
+    function obtenerFuncionario($searchText)
+    {
+        $this->objParam->defecto('ordenacion', 'descripcion_cargo');
+        $this->objParam->defecto('dir_ordenacion', 'asc');
+        $this->objParam->addParametroConsulta('cantidad', 1);
+        $this->objParam->addParametroConsulta('puntero', 0);
+
+        $this->objParam->addFiltro("lower(FUNCAR.desc_funcionario1) like lower(''%" . $searchText . "%'')");
+        $this->objFun1 = $this->create('MODHelpDesk');
+        return $this->objFun1->obtenerFuncionario($this->objParam);
+    }
+
+    function obtenerDatosWfHelpDesk()
+    {
+        $this->objFun1 = $this->create('MODHelpDesk');
+        return $this->objFun1->obtenerDatosWFHelpDesk($this->objParam);
+    }
 }
 
 ?>
