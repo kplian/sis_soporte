@@ -78,7 +78,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('fecha','fecha','date');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
-		$this->setParametro('descripcion','descripcion','varchar');
+		$this->setParametro('descripcion','descripcion','codigo_html');
 		$this->setParametro('id_tipo','id_tipo','int4');
         $this->setParametro('numero_ref','numero_ref','integer');//#14
         $this->setParametro('numero_correo', 'numero_correo', 'int4');
@@ -105,7 +105,7 @@ class MODHelpDesk extends MODbase{
 		$this->setParametro('fecha','fecha','date');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('nro_tramite','nro_tramite','varchar');
-		$this->setParametro('descripcion','descripcion','varchar');
+		$this->setParametro('descripcion','descripcion','codigo_html');
 		$this->setParametro('id_tipo','id_tipo','int4');
         $this->setParametro('numero_ref','numero_ref','integer');//#14
 		//Ejecuta la instruccion
