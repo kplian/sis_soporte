@@ -175,7 +175,7 @@ class ACTHelpDesk extends ACTbase{
                                 $this->objParam->addParametro('id_tipo_estado', $datos[0]['id_tipo_estado']);
                                 $this->objParam->addParametro('id_funcionario_wf', 'NULL');
                                 $this->objParam->addParametro('json_procesos', '[]');
-                                $this->objFunc1 = $this->create('MODHelpDesk');
+                                $this->objFunc1 = $this->create('MODHelpDeskImportar');
                                 $rs3 = $this->objFunc1->siguienteEstado($this->objParam);
                             }
                             imap_setflag_full($inbox, $email_number, "\\Seen \\Flagged");
