@@ -161,7 +161,7 @@ class ACTHelpDesk extends ACTbase{
                         $this->objParam->addParametro('id_tipo', '2');
                         $this->objParam->addParametro('numero_ref', 'NULL');
                         $this->objParam->addParametro('numero_correo', $email_number);
-                        $this->objFunc = $this->create('MODHelpDesk');
+                        $this->objFunc = $this->create('MODHelpDeskImportar');
                         $rs1 = $this->objFunc->insertarHelpDesk($this->objParam);
                         if ($rs1->getTipo() == 'EXITO') {
                             $datos = $rs1->getDatos();
@@ -206,13 +206,13 @@ class ACTHelpDesk extends ACTbase{
         $this->objParam->addParametroConsulta('puntero', 0);
         $this->objParam->parametros_consulta['filtro'] = ' 0 = 0 ';
         $this->objParam->addFiltro("lower(FUNCAR.email_empresa) LIKE lower(''%" . $searchText . "%'')");
-        $this->objFun1 = $this->create('MODHelpDesk');
+        $this->objFun1 = $this->create('MODHelpDeskImportar');
         return $this->objFun1->obtenerFuncionario($this->objParam);
     }
 
     function obtenerDatosWfHelpDesk()
     {
-        $this->objFun1 = $this->create('MODHelpDesk');
+        $this->objFun1 = $this->create('MODHelpDeskImportar');
         return $this->objFun1->obtenerDatosWFHelpDesk($this->objParam);
     }
 }
